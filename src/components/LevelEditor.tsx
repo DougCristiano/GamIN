@@ -8,11 +8,12 @@ interface LevelEditorProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (levels: LevelConfig[]) => void;
+    asPage?: boolean; // Nova prop para renderizar como página
 }
 
 type EditorMode = 'robot' | 'star';
 
-const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave }) => {
+const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPage = false }) => {
     const [levels, setLevels] = useState<LevelConfig[]>([...LEVELS]);
     const [selectedLevelId, setSelectedLevelId] = useState<number>(1);
     const [currentLevel, setCurrentLevel] = useState<LevelConfig | null>(null);
@@ -126,93 +127,114 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave }) =>
         return cells;
     };
 
-    return (
-        <div className={styles.overlay} onClick={onClose}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                <div className={styles.header}>
-                    <h2 className={styles.title}>🎮 Editor de Níveis</h2>
+    // Conteúdo do editor (reutilizado em ambos os modos)
+    const editorContent = (
+        <>
+            <div className={styles.header}>
+                <h2 className={styles.title}>🎮 Editor de Níveis</h2>
+                {!asPage && (
                     <button className={styles.closeBtn} onClick={onClose}>
                         <FaTimes />
                     </button>
-                </div>
+                )}
+            </div>
 
-                <div className={styles.content}>
-                    {/* Seletor de Níveis */}
-                    <div className={styles.editorSection}>
-                        <h3 className={styles.sectionTitle}>Selecione o Nível</h3>
-                        <div className={styles.levelSelector}>
-                            {levels.map(level => (
-                                <button
-                                    key={level.id}
-                                    className={`${styles.levelBtn} ${selectedLevelId === level.id ? styles.active : ''}`}
-                                    onClick={() => setSelectedLevelId(level.id)}
-                                >
-                                    Nível {level.id}
-                                </button>
-                            ))}
-                            <button className={styles.newLevelBtn} onClick={handleNewLevel}>
-                                <FaPlus /> Novo Nível
+            <div className={styles.content}>
+                {/* Seletor de Níveis */}
+                <div className={styles.editorSection}>
+                    <h3 className={styles.sectionTitle}>Selecione o Nível</h3>
+                    <div className={styles.levelSelector}>
+                        {levels.map(level => (
+                            <button
+                                key={level.id}
+                                className={`${styles.levelBtn} ${selectedLevelId === level.id ? styles.active : ''}`}
+                                onClick={() => setSelectedLevelId(level.id)}
+                            >
+                                Nível {level.id}
                             </button>
-                        </div>
-                    </div>
-
-                    {/* Nome do Nível */}
-                    <div className={styles.editorSection}>
-                        <h3 className={styles.sectionTitle}>Nome do Nível</h3>
-                        <div className={styles.inputGroup}>
-                            <input
-                                type="text"
-                                value={levelName}
-                                onChange={(e) => setLevelName(e.target.value)}
-                                placeholder="Digite o nome do nível..."
-                            />
-                        </div>
-                    </div>
-
-                    {/* Editor Visual */}
-                    <div className={styles.editorSection}>
-                        <h3 className={styles.sectionTitle}>Editor Visual</h3>
-
-                        <div className={styles.info}>
-                            💡 <strong>Dica:</strong> Selecione o modo (Robô ou Estrela) e clique nas células da grade para posicionar os elementos.
-                        </div>
-
-                        <div className={styles.gridEditor}>
-                            {/* Seletor de Modo */}
-                            <div className={styles.modeSelector}>
-                                <button
-                                    className={`${styles.modeBtn} ${editorMode === 'robot' ? styles.active : ''}`}
-                                    onClick={() => setEditorMode('robot')}
-                                >
-                                    <FaRobot /> Posicionar Robô
-                                </button>
-                                <button
-                                    className={`${styles.modeBtn} ${editorMode === 'star' ? styles.active : ''}`}
-                                    onClick={() => setEditorMode('star')}
-                                >
-                                    <FaStar /> Posicionar Estrela
-                                </button>
-                            </div>
-
-                            {/* Grade */}
-                            <div className={styles.grid}>
-                                {renderGrid()}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Ações */}
-                    <div className={styles.actions}>
-                        {levels.length > 1 && (
-                            <button className={styles.deleteBtn} onClick={handleDeleteLevel}>
-                                <FaTrash /> Deletar Nível
-                            </button>
-                        )}
-                        <button className={styles.saveBtn} onClick={handleSave}>
-                            <FaSave /> Salvar Alterações
+                        ))}
+                        <button className={styles.newLevelBtn} onClick={handleNewLevel}>
+                            <FaPlus /> Novo Nível
                         </button>
                     </div>
                 </div>
+
+                {/* Nome do Nível */}
+                <div className={styles.editorSection}>
+                    <h3 className={styles.sectionTitle}>Nome do Nível</h3>
+                    <div className={styles.inputGroup}>
+                        <input
+                            type="text"
+                            value={levelName}
+                            onChange={(e) => setLevelName(e.target.value)}
+                            placeholder="Digite o nome do nível..."
+                        />
+                    </div>
+                </div>
+
+                {/* Editor Visual */}
+                <div className={styles.editorSection}>
+                    <h3 className={styles.sectionTitle}>Editor Visual</h3>
+
+                    <div className={styles.info}>
+                        💡 <strong>Dica:</strong> Selecione o modo (Robô ou Estrela) e clique nas células da grade para posicionar os elementos.
+                    </div>
+
+                    <div className={styles.gridEditor}>
+                        {/* Seletor de Modo */}
+                        <div className={styles.modeSelector}>
+                            <button
+                                className={`${styles.modeBtn} ${editorMode === 'robot' ? styles.active : ''}`}
+                                onClick={() => setEditorMode('robot')}
+                            >
+                                <FaRobot /> Posicionar Robô
+                            </button>
+                            <button
+                                className={`${styles.modeBtn} ${editorMode === 'star' ? styles.active : ''}`}
+                                onClick={() => setEditorMode('star')}
+                            >
+                                <FaStar /> Posicionar Estrela
+                            </button>
+                        </div>
+
+                        {/* Grade */}
+                        <div className={styles.grid}>
+                            {renderGrid()}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Ações */}
+                <div className={styles.actions}>
+                    {levels.length > 1 && (
+                        <button className={styles.deleteBtn} onClick={handleDeleteLevel}>
+                            <FaTrash /> Deletar Nível
+                        </button>
+                    )}
+                    <button className={styles.saveBtn} onClick={handleSave}>
+                        <FaSave /> Salvar Alterações
+                    </button>
+                </div>
+            </div>
+        </>
+    );
+
+    // Se for página, renderiza sem overlay e com classe pageContent
+    if (asPage) {
+        return (
+            <div className={styles.pageContainer}>
+                <div className={styles.pageContent}>
+                    {editorContent}
+                </div>
+            </div>
+        );
+    }
+
+    // Se for modal, renderiza com overlay
+    return (
+        <div className={styles.overlay} onClick={onClose}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                {editorContent}
             </div>
         </div>
     );

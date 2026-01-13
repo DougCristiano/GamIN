@@ -1,23 +1,17 @@
-import { useState } from 'react';
-import Game from './game';
-import Header from './components/Header';
-import type { LevelConfig } from './types/tipos';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import GamePage from './pages/GamePage';
+import EditorPage from './pages/EditorPage';
 
 function App() {
-  const [customLevels, setCustomLevels] = useState<LevelConfig[] | null>(null);
-
-  const handleLevelsUpdate = (levels: LevelConfig[]) => {
-    setCustomLevels(levels);
-  };
-
   return (
-    <div className="App">
-      <Header onLevelsUpdate={handleLevelsUpdate} />
-      <main style={{ display: 'flex', justifyContent: 'center', paddingTop: '2rem' }}>
-        <Game customLevels={customLevels} />
-      </main>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<GamePage />} />
+        <Route path="/editor" element={<EditorPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 export default App;
+
