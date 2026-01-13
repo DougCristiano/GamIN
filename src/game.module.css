@@ -29,7 +29,34 @@
     align-items: center;
     justify-content: center;
     transition: all 0.35s ease-in-out;
-    /* O segredo da animação */
+    z-index: 10;
+}
+
+.star {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffd700;
+    font-size: 32px;
+    z-index: 5;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.8);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(0.8);
+    }
 }
 
 .robotImage {
@@ -43,6 +70,19 @@
     gap: 10px;
 }
 
+.queueDisplay {
+    margin: 10px 0;
+    min-height: 24px;
+    color: #333;
+}
+
+/* Dark mode logic if needed, but keeping simple for now */
+@media (prefers-color-scheme: dark) {
+    .queueDisplay {
+        color: #eee;
+    }
+}
+
 button {
     padding: 10px 20px;
     cursor: pointer;
@@ -50,4 +90,34 @@ button {
     color: white;
     border: none;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+button:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+.playBtn {
+    background: #2ecc71;
+}
+
+.playBtn:hover {
+    background: #27ae60;
+}
+
+.resetBtn {
+    background: #e74c3c;
+}
+
+.resetBtn:hover {
+    background: #c0392b;
 }

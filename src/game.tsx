@@ -1,15 +1,60 @@
-import React, { useState } from 'react';
-import styles from './Game.module.css';
-import type { RobotState, Command } from './types/tipos.ts';
+import React, { useState, useEffect } from 'react';
+import styles from './game.module.css';
+import type { RobotState, Command, LevelConfig, Position } from './types/tipos.ts';
 import robotImg from './assets/robot.png';
-import { FaArrowLeft, FaArrowUp, FaArrowRight, FaPlay, FaUndo } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowUp, FaArrowRight, FaPlay, FaUndo, FaStar, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { LEVELS as DEFAULT_LEVELS } from './levels/levelConfig';
 
 const GRID_SIZE = 5;
 
-const Game: React.FC = () => {
+interface GameProps {
+    customLevels?: LevelConfig[] | null;
+}
+
+const Game: React.FC<GameProps> = ({ customLevels }) => {
+    const [currentLevelId, setCurrentLevelId] = useState(1);
     const [robot, setRobot] = useState<RobotState>({ x: 0, y: 0, rotation: 90 });
     const [commandQueue, setCommandQueue] = useState<Command[]>([]);
     const [isExecuting, setIsExecuting] = useState(false);
+    const [starPosition, setStarPosition] = useState<Position>({ x: 4, y: 4 });
+    const [levelName, setLevelName] = useState('');
+
+    // Usa níveis customizados se disponíveis, senão usa os padrões
+    const activeLevels = customLevels || DEFAULT_LEVELS;
+
+    // Carrega o nível quando muda
+    useEffect(() => {
+        loadLevel(currentLevelId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentLevelId]);
+
+    // Recarrega quando customLevels muda
+    useEffect(() => {
+        if (customLevels) {
+            loadLevel(currentLevelId);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [customLevels]);
+
+    const getLevel = (levelId: number): LevelConfig | undefined => {
+        return activeLevels.find(level => level.id === levelId);
+    };
+
+    const loadLevel = (levelId: number) => {
+        const level = getLevel(levelId);
+        if (level) {
+            console.log('Loading level:', level);
+            setRobot({
+                x: level.robotStart.x,
+                y: level.robotStart.y,
+                rotation: 90
+            });
+            setStarPosition({ ...level.starPosition }); // Cria novo objeto
+            setLevelName(level.name);
+            setCommandQueue([]);
+            setIsExecuting(false);
+        }
+    };
 
     // Adiciona comando à fila
     const addCommand = (cmd: Command) => {
@@ -17,37 +62,69 @@ const Game: React.FC = () => {
         setCommandQueue((prev) => [...prev, cmd]);
     };
 
-    // Limpa a fila e reseta o robô
+    // Limpa a fila e reseta o robô para a posição inicial do nível atual
     const reset = () => {
-        setRobot({ x: 0, y: 0, rotation: 90 });
-        setCommandQueue([]);
-        setIsExecuting(false);
+        loadLevel(currentLevelId);
     };
 
-    // Executa a fila com um delay entre cada passo (efeito visual)
+    // Navega para o próximo nível
+    const nextLevel = () => {
+        if (currentLevelId < activeLevels.length) {
+            setCurrentLevelId(currentLevelId + 1);
+        }
+    };
+
+    // Navega para o nível anterior
+    const previousLevel = () => {
+        if (currentLevelId > 1) {
+            setCurrentLevelId(currentLevelId - 1);
+        }
+    };
+
+    // Executa a fila com delay
     const runCommands = async () => {
         setIsExecuting(true);
+        const level = getLevel(currentLevelId);
+        if (!level) return;
+
+        let { x, y, rotation } = robot;
 
         for (const cmd of commandQueue) {
-            await new Promise((resolve) => setTimeout(resolve, 500)); // Espera 500ms
+            await new Promise((resolve) => setTimeout(resolve, 500));
 
-            setRobot((prev) => {
-                let { x, y, rotation } = prev;
-                const angle = ((rotation % 360) + 360) % 360; // Normaliza ângulo positivo
+            // Lógica de Movimento Local
+            const angle = ((rotation % 360) + 360) % 360;
 
-                if (cmd === 'MOVE') {
-                    if (angle === 0) y = Math.max(0, y - 1);
-                    else if (angle === 90) x = Math.min(GRID_SIZE - 1, x + 1);
-                    else if (angle === 180) y = Math.min(GRID_SIZE - 1, y + 1);
-                    else if (angle === 270) x = Math.max(0, x - 1);
-                } else if (cmd === 'LEFT') {
-                    rotation -= 90;
-                } else if (cmd === 'RIGHT') {
-                    rotation += 90;
+            if (cmd === 'MOVE') {
+                if (angle === 0) y = Math.max(0, y - 1);
+                else if (angle === 90) x = Math.min(GRID_SIZE - 1, x + 1);
+                else if (angle === 180) y = Math.min(GRID_SIZE - 1, y + 1);
+                else if (angle === 270) x = Math.max(0, x - 1);
+            } else if (cmd === 'LEFT') {
+                rotation -= 90;
+            } else if (cmd === 'RIGHT') {
+                rotation += 90;
+            }
+
+            // Atualiza estado visual
+            setRobot({ x, y, rotation });
+
+            // Verifica colisão com a estrela
+            if (x === starPosition.x && y === starPosition.y) {
+                // Pequeno delay para visualizar o robô na estrela antes do alerta
+                await new Promise((resolve) => setTimeout(resolve, 200));
+
+                const totalLevels = activeLevels.length;
+                if (currentLevelId < totalLevels) {
+                    alert(`✅ ${levelName} Completado! Indo para o próximo nível...`);
+                    setCurrentLevelId(currentLevelId + 1);
+                } else {
+                    alert('🎉 Parabéns! Você completou todos os níveis!');
+                    setCurrentLevelId(1); // Reinicia do primeiro nível
                 }
-
-                return { x, y, rotation };
-            });
+                setIsExecuting(false);
+                return;
+            }
         }
 
         setIsExecuting(false);
@@ -55,20 +132,72 @@ const Game: React.FC = () => {
 
     return (
         <div className={styles.container}>
+            <div className={styles.levelHeader}>
+                <button
+                    onClick={previousLevel}
+                    disabled={currentLevelId === 1}
+                    className={styles.navBtn}
+                    title="Nível Anterior"
+                >
+                    <FaChevronLeft />
+                </button>
+
+                <div className={styles.levelInfo}>
+                    <h2>{levelName}</h2>
+                    <p style={{ color: '#888', fontSize: '0.9rem', margin: '0.25rem 0' }}>
+                        Nível {currentLevelId} de {activeLevels.length}
+                    </p>
+                </div>
+
+                <button
+                    onClick={nextLevel}
+                    disabled={currentLevelId === activeLevels.length}
+                    className={styles.navBtn}
+                    title="Próximo Nível"
+                >
+                    <FaChevronRight />
+                </button>
+            </div>
+
             <div className={styles.board}>
+                {/* Grid */}
                 {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => (
                     <div key={i} className={styles.cell} />
                 ))}
+
+                {/* Estrela */}
+                <div
+                    className={styles.star}
+                    style={{
+                        transform: `translate(${starPosition.x * 60}px, ${starPosition.y * 60}px)`
+                    }}
+                >
+                    <FaStar />
+                </div>
+
+                {/* Robô */}
                 <div
                     className={styles.robot}
-                    style={{ transform: `translate(${robot.x * 60}px, ${robot.y * 60}px) rotate(${robot.rotation - 90}deg)` }}
+                    style={{
+                        transform: `translate(${robot.x * 60}px, ${robot.y * 60}px) rotate(${robot.rotation - 90}deg)`
+                    }}
                 >
                     <img src={robotImg} alt="Robot" className={styles.robotImage} />
                 </div>
             </div>
 
             <div className={styles.queueDisplay}>
-                <strong>Fila:</strong> {commandQueue.map((c, i) => <span key={i}>{c} </span>)}
+                <strong>Fila de Comandos:</strong> {commandQueue.length === 0 ? (
+                    <span style={{ color: '#999' }}> (vazia)</span>
+                ) : (
+                    commandQueue.map((c, i) => (
+                        <span key={i} style={{ margin: '0 4px' }}>
+                            {c === 'MOVE' ? <FaArrowUp size={12} /> :
+                                c === 'LEFT' ? <FaArrowLeft size={12} /> :
+                                    <FaArrowRight size={12} />}
+                        </span>
+                    ))
+                )}
             </div>
 
             <div className={styles.controls}>
