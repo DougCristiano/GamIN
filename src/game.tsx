@@ -7,6 +7,7 @@ import { LEVELS as DEFAULT_LEVELS } from './levels/levelConfig';
 import FunctionEditor from './components/FunctionEditor';
 
 const GRID_SIZE = 5;
+const CELL_SIZE = 140; // Tamanho de cada célula em pixels (700px ÷ 5 = 140px)
 const MAX_EXECUTION_STEPS = 1000; // Limite para evitar loops infinitos
 
 interface GameProps {
@@ -249,7 +250,7 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
                                             c === 'RIGHT' ? <FaArrowRight size={12} /> :
                                                 <span style={{
                                                     background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
-                                                    padding: '2px 6px',
+                                                    padding: '1px',
                                                     borderRadius: '4px',
                                                     fontSize: '10px',
                                                     fontWeight: 'bold'
@@ -289,7 +290,7 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
                         <div
                             className={styles.star}
                             style={{
-                                transform: `translate(${starPosition.x * 60}px, ${starPosition.y * 60}px)`
+                                transform: `translate(${starPosition.x * CELL_SIZE}px, ${starPosition.y * CELL_SIZE}px)`
                             }}
                         >
                             <FaStar />
@@ -299,7 +300,7 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
                         <div
                             className={styles.robot}
                             style={{
-                                transform: `translate(${robot.x * 60}px, ${robot.y * 60}px) rotate(${robot.rotation - 90}deg)`
+                                transform: `translate(${robot.x * CELL_SIZE}px, ${robot.y * CELL_SIZE}px) rotate(${robot.rotation - 90}deg)`
                             }}
                         >
                             <img src={robotImg} alt="Robot" className={styles.robotImage} />

@@ -3,7 +3,9 @@
     padding: 1.5rem;
     border-radius: 12px;
     border: 1px solid rgba(37, 99, 235, 0.3);
-    margin-top: 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .functionTabs {
