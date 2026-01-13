@@ -12,15 +12,25 @@ interface GameProps {
 }
 
 const Game: React.FC<GameProps> = ({ customLevels }) => {
-    const [currentLevelId, setCurrentLevelId] = useState(1);
-    const [robot, setRobot] = useState<RobotState>({ x: 0, y: 0, rotation: 90 });
-    const [commandQueue, setCommandQueue] = useState<Command[]>([]);
-    const [isExecuting, setIsExecuting] = useState(false);
-    const [starPosition, setStarPosition] = useState<Position>({ x: 4, y: 4 });
-    const [levelName, setLevelName] = useState('');
-
     // Usa níveis customizados se disponíveis, senão usa os padrões
     const activeLevels = customLevels || DEFAULT_LEVELS;
+
+    // Pega o primeiro nível para inicialização
+    const initialLevel = activeLevels[0];
+
+    const [currentLevelId, setCurrentLevelId] = useState(initialLevel.id);
+    const [robot, setRobot] = useState<RobotState>({
+        x: initialLevel.robotStart.x,
+        y: initialLevel.robotStart.y,
+        rotation: 90
+    });
+    const [commandQueue, setCommandQueue] = useState<Command[]>([]);
+    const [isExecuting, setIsExecuting] = useState(false);
+    const [starPosition, setStarPosition] = useState<Position>({
+        x: initialLevel.starPosition.x,
+        y: initialLevel.starPosition.y
+    });
+    const [levelName, setLevelName] = useState(initialLevel.name);
 
     // Carrega o nível quando muda
     useEffect(() => {
@@ -43,16 +53,26 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
     const loadLevel = (levelId: number) => {
         const level = getLevel(levelId);
         if (level) {
-            console.log('Loading level:', level);
+            console.log('🎮 Loading level:', level.name);
+            console.log('🤖 Robot start:', level.robotStart);
+            console.log('⭐ Star position:', level.starPosition);
+
             setRobot({
                 x: level.robotStart.x,
                 y: level.robotStart.y,
                 rotation: 90
             });
-            setStarPosition({ ...level.starPosition }); // Cria novo objeto
+            setStarPosition({
+                x: level.starPosition.x,
+                y: level.starPosition.y
+            });
             setLevelName(level.name);
             setCommandQueue([]);
             setIsExecuting(false);
+
+            console.log('✅ Level loaded successfully');
+        } else {
+            console.error('❌ Level not found:', levelId);
         }
     };
 

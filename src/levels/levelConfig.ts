@@ -22,6 +22,12 @@ export const LEVELS: LevelConfig[] = [
         robotStart: { x: 0, y: 0 },
         starPosition: { x: 3, y: 2 }, // Posição intermediária diferente
     },
+    {
+        id: 3,
+        name: 'Nível 3 - Desafio Avançado',
+        robotStart: { x: 0, y: 0 },
+        starPosition: { x: 2, y: 4 }, // Canto inferior meio
+    },
 ];
 
 /**
