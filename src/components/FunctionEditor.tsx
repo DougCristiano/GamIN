@@ -87,14 +87,34 @@ const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFunctionsC
                 {(['F0', 'F1', 'F2'] as const).map(funcName => {
                     const func = functions.find(f => f.name === funcName);
                     const count = func?.commands.length || 0;
+                    const isSaved = count > 0;
+
                     return (
-                        <button
-                            key={funcName}
-                            className={`${styles.functionTab} ${activeFunction === funcName ? styles.active : ''}`}
-                            onClick={() => setActiveFunction(funcName)}
-                        >
-                            {funcName} {count > 0 && `(${count})`}
-                        </button>
+                        <div key={funcName} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                            <button
+                                className={`${styles.functionTab} ${activeFunction === funcName ? styles.active : ''}`}
+                                onClick={() => setActiveFunction(funcName)}
+                            >
+                                {funcName} {count > 0 && `(${count})`}
+                            </button>
+
+                            {/* Preview da função salva */}
+                            {isSaved && (
+                                <div className={styles.functionPreview}>
+                                    <div className={styles.previewLabel}>{funcName}:</div>
+                                    <div className={styles.previewCommands}>
+                                        {func!.commands.map((cmd, idx) => (
+                                            <span key={idx} className={styles.previewIcon}>
+                                                {cmd === 'MOVE' ? <FaArrowUp size={12} /> :
+                                                    cmd === 'LEFT' ? <FaArrowLeft size={12} /> :
+                                                        cmd === 'RIGHT' ? <FaArrowRight size={12} /> :
+                                                            <span className={styles.previewFuncName}>{cmd}</span>}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     );
                 })}
             </div>

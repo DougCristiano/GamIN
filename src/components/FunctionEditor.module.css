@@ -39,6 +39,44 @@
     box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
 }
 
+.functionPreview {
+    background: rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    border-radius: 6px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.previewLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #60a5fa;
+}
+
+.previewCommands {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.previewIcon {
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+}
+
+.previewFuncName {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    color: white;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
 .functionContent {
     background: rgba(0, 0, 0, 0.2);
     padding: 1rem;

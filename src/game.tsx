@@ -39,6 +39,7 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
         { name: 'F1', commands: [] },
         { name: 'F2', commands: [] },
     ]);
+    const [recursionWarning, setRecursionWarning] = useState<string | null>(null);
 
     // Carrega o nível quando muda
     useEffect(() => {
@@ -85,9 +86,11 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
     };
 
     // Expande funções recursivamente com proteção contra loops infinitos
-    const expandCommands = (commands: Command[], depth = 0, visited = new Set<string>()): Command[] => {
-        if (depth > 10) {
-            console.warn('⚠️ Profundidade máxima de recursão atingida');
+    const expandCommands = (commands: Command[], depth = 0, callStack: string[] = []): Command[] => {
+        // Limite de profundidade para evitar stack overflow
+        if (depth > 50) {
+            setRecursionWarning('⚠️ Limite de profundidade atingido (50 níveis). A execução foi interrompida para evitar travamento.');
+            console.warn('⚠️ Profundidade máxima de recursão atingida (50 níveis)');
             return [];
         }
 
@@ -95,17 +98,22 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
 
         for (const cmd of commands) {
             if (cmd === 'F0' || cmd === 'F1' || cmd === 'F2') {
-                // Detecta recursão circular
-                if (visited.has(cmd)) {
-                    console.warn(`⚠️ Recursão circular detectada em ${cmd}`);
-                    continue;
-                }
-
                 const func = functions.find(f => f.name === cmd);
+
                 if (func && func.commands.length > 0) {
-                    const newVisited = new Set(visited);
-                    newVisited.add(cmd);
-                    const subCommands = expandCommands(func.commands, depth + 1, newVisited);
+                    // Conta quantas vezes esta função já está na pilha de chamadas
+                    const recursionCount = callStack.filter(f => f === cmd).length;
+
+                    // Permite até 10 chamadas recursivas da mesma função
+                    if (recursionCount >= 10) {
+                        setRecursionWarning(`⚠️ Limite de recursão atingido para ${cmd} (10 chamadas). A função foi expandida 10 vezes e parou para evitar loop infinito.`);
+                        console.warn(`⚠️ Limite de recursão atingido para ${cmd} (10 chamadas)`);
+                        continue;
+                    }
+
+                    // Adiciona a função atual à pilha de chamadas
+                    const newCallStack = [...callStack, cmd];
+                    const subCommands = expandCommands(func.commands, depth + 1, newCallStack);
                     expanded.push(...subCommands);
                 } else {
                     console.warn(`⚠️ Função ${cmd} está vazia ou não definida`);
@@ -146,6 +154,7 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
     // Executa a fila com delay
     const runCommands = async () => {
         setIsExecuting(true);
+        setRecursionWarning(null); // Limpa avisos anteriores
         const level = getLevel(currentLevelId);
         if (!level) return;
 
@@ -240,25 +249,68 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
                 <div className={styles.instructionsPanel}>
                     {/* Fila de Comandos */}
                     <div className={styles.queueDisplay}>
-                        <strong>Fila de Comandos:</strong> {commandQueue.length === 0 ? (
-                            <span style={{ color: '#999' }}> (vazia)</span>
+                        <strong>Fila de Comandos:</strong>
+                        {commandQueue.length === 0 ? (
+                            <span style={{ color: '#999', marginLeft: '0.5rem' }}>(vazia)</span>
                         ) : (
-                            commandQueue.map((c, i) => (
-                                <span key={i} style={{ margin: '0 4px' }}>
-                                    {c === 'MOVE' ? <FaArrowUp size={12} /> :
-                                        c === 'LEFT' ? <FaArrowLeft size={12} /> :
-                                            c === 'RIGHT' ? <FaArrowRight size={12} /> :
-                                                <span style={{
-                                                    background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
-                                                    padding: '1px',
-                                                    borderRadius: '4px',
-                                                    fontSize: '10px',
-                                                    fontWeight: 'bold'
-                                                }}>{c}</span>}
-                                </span>
-                            ))
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginLeft: '0.5rem' }}>
+                                {commandQueue.map((c, i) => (
+                                    <span key={i}>
+                                        {c === 'MOVE' ? <FaArrowUp size={16} color="#3b82f6" /> :
+                                            c === 'LEFT' ? <FaArrowLeft size={16} color="#3b82f6" /> :
+                                                c === 'RIGHT' ? <FaArrowRight size={16} color="#3b82f6" /> :
+                                                    <span style={{
+                                                        background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
+                                                        padding: '3px 8px',
+                                                        borderRadius: '4px',
+                                                        fontSize: '12px',
+                                                        fontWeight: 'bold',
+                                                        color: 'white'
+                                                    }}>{c}</span>}
+                                    </span>
+                                ))}
+                            </div>
                         )}
                     </div>
+
+                    {/* Aviso de Recursão/Loop Infinito */}
+                    {recursionWarning && (
+                        <div style={{
+                            background: 'rgba(234, 179, 8, 0.15)',
+                            border: '2px solid #eab308',
+                            borderRadius: '8px',
+                            padding: '0.75rem 1rem',
+                            color: '#fbbf24',
+                            fontSize: '0.9rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            animation: 'slideIn 0.3s ease-out'
+                        }}>
+                            <FaStar style={{ color: '#eab308', fontSize: '1.2rem' }} />
+                            <div>
+                                <strong>Limite de Recursão:</strong>
+                                <div style={{ marginTop: '0.25rem', fontSize: '0.85rem' }}>
+                                    {recursionWarning}
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setRecursionWarning(null)}
+                                style={{
+                                    marginLeft: 'auto',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#fbbf24',
+                                    cursor: 'pointer',
+                                    fontSize: '1.2rem',
+                                    padding: '0.25rem'
+                                }}
+                                title="Fechar aviso"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    )}
 
                     {/* Botões de Controle */}
                     <div className={styles.controls}>
