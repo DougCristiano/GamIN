@@ -1,7 +1,7 @@
 // tipos.ts
 export type Direction = 'NORTH' | 'EAST' | 'SOUTH' | 'WEST';
 
-export type Command = 'MOVE' | 'LEFT' | 'RIGHT';
+export type Command = 'MOVE' | 'LEFT' | 'RIGHT' | 'F0' | 'F1' | 'F2';
 
 export interface RobotState {
   x: number;
@@ -20,4 +20,9 @@ export interface LevelConfig {
   robotStart: Position;
   starPosition: Position;
   obstacles?: Position[]; // Para futuras expansões
+}
+
+export interface FunctionDefinition {
+  name: string;
+  commands: Command[];
 }

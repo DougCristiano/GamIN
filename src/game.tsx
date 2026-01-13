@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from './game.module.css';
-import type { RobotState, Command, LevelConfig, Position } from './types/tipos.ts';
+import type { RobotState, Command, LevelConfig, Position, FunctionDefinition } from './types/tipos.ts';
 import robotImg from './assets/robot.png';
 import { FaArrowLeft, FaArrowUp, FaArrowRight, FaPlay, FaUndo, FaStar, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { LEVELS as DEFAULT_LEVELS } from './levels/levelConfig';
+import FunctionEditor from './components/FunctionEditor';
 
 const GRID_SIZE = 5;
+const MAX_EXECUTION_STEPS = 1000; // Limite para evitar loops infinitos
 
 interface GameProps {
     customLevels?: LevelConfig[] | null;
@@ -31,6 +33,11 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
         y: initialLevel.starPosition.y
     });
     const [levelName, setLevelName] = useState(initialLevel.name);
+    const [functions, setFunctions] = useState<FunctionDefinition[]>([
+        { name: 'F0', commands: [] },
+        { name: 'F1', commands: [] },
+        { name: 'F2', commands: [] },
+    ]);
 
     // Carrega o nível quando muda
     useEffect(() => {
@@ -76,6 +83,40 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
         }
     };
 
+    // Expande funções recursivamente com proteção contra loops infinitos
+    const expandCommands = (commands: Command[], depth = 0, visited = new Set<string>()): Command[] => {
+        if (depth > 10) {
+            console.warn('⚠️ Profundidade máxima de recursão atingida');
+            return [];
+        }
+
+        const expanded: Command[] = [];
+
+        for (const cmd of commands) {
+            if (cmd === 'F0' || cmd === 'F1' || cmd === 'F2') {
+                // Detecta recursão circular
+                if (visited.has(cmd)) {
+                    console.warn(`⚠️ Recursão circular detectada em ${cmd}`);
+                    continue;
+                }
+
+                const func = functions.find(f => f.name === cmd);
+                if (func && func.commands.length > 0) {
+                    const newVisited = new Set(visited);
+                    newVisited.add(cmd);
+                    const subCommands = expandCommands(func.commands, depth + 1, newVisited);
+                    expanded.push(...subCommands);
+                } else {
+                    console.warn(`⚠️ Função ${cmd} está vazia ou não definida`);
+                }
+            } else {
+                expanded.push(cmd);
+            }
+        }
+
+        return expanded;
+    };
+
     // Adiciona comando à fila
     const addCommand = (cmd: Command) => {
         if (isExecuting) return;
@@ -107,10 +148,22 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
         const level = getLevel(currentLevelId);
         if (!level) return;
 
+        // Expande as funções
+        const expandedCommands = expandCommands(commandQueue);
+        console.log('📋 Comandos expandidos:', expandedCommands);
+
+        // Proteção contra loops infinitos
+        if (expandedCommands.length > MAX_EXECUTION_STEPS) {
+            alert(`⚠️ Muitos comandos! Limite de ${MAX_EXECUTION_STEPS} passos excedido. Verifique se há recursão infinita.`);
+            setIsExecuting(false);
+            return;
+        }
+
         let { x, y, rotation } = robot;
 
-        for (const cmd of commandQueue) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
+        for (let i = 0; i < expandedCommands.length; i++) {
+            const cmd = expandedCommands[i];
+            await new Promise((resolve) => setTimeout(resolve, 300)); // Velocidade de execução
 
             // Lógica de Movimento Local
             const angle = ((rotation % 360) + 360) % 360;
@@ -152,6 +205,7 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
 
     return (
         <div className={styles.container}>
+            {/* Título e Navegação no Topo */}
             <div className={styles.levelHeader}>
                 <button
                     onClick={previousLevel}
@@ -179,55 +233,79 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
                 </button>
             </div>
 
-            <div className={styles.board}>
-                {/* Grid */}
-                {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => (
-                    <div key={i} className={styles.cell} />
-                ))}
+            {/* Layout de Duas Colunas */}
+            <div className={styles.gameLayout}>
+                {/* COLUNA ESQUERDA - Instruções */}
+                <div className={styles.instructionsPanel}>
+                    {/* Fila de Comandos */}
+                    <div className={styles.queueDisplay}>
+                        <strong>Fila de Comandos:</strong> {commandQueue.length === 0 ? (
+                            <span style={{ color: '#999' }}> (vazia)</span>
+                        ) : (
+                            commandQueue.map((c, i) => (
+                                <span key={i} style={{ margin: '0 4px' }}>
+                                    {c === 'MOVE' ? <FaArrowUp size={12} /> :
+                                        c === 'LEFT' ? <FaArrowLeft size={12} /> :
+                                            c === 'RIGHT' ? <FaArrowRight size={12} /> :
+                                                <span style={{
+                                                    background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '4px',
+                                                    fontSize: '10px',
+                                                    fontWeight: 'bold'
+                                                }}>{c}</span>}
+                                </span>
+                            ))
+                        )}
+                    </div>
 
-                {/* Estrela */}
-                <div
-                    className={styles.star}
-                    style={{
-                        transform: `translate(${starPosition.x * 60}px, ${starPosition.y * 60}px)`
-                    }}
-                >
-                    <FaStar />
+                    {/* Botões de Controle */}
+                    <div className={styles.controls}>
+                        <button onClick={() => addCommand('LEFT')}><FaArrowLeft /> Girar Esq</button>
+                        <button onClick={() => addCommand('MOVE')}><FaArrowUp /> Frente</button>
+                        <button onClick={() => addCommand('RIGHT')}>Girar Dir <FaArrowRight /></button>
+                        <button onClick={() => addCommand('F0')} className={styles.functionCallBtn}>F0</button>
+                        <button onClick={() => addCommand('F1')} className={styles.functionCallBtn}>F1</button>
+                        <button onClick={() => addCommand('F2')} className={styles.functionCallBtn}>F2</button>
+                        <button onClick={runCommands} disabled={isExecuting || commandQueue.length === 0} className={styles.playBtn}>
+                            <FaPlay /> PLAY
+                        </button>
+                        <button onClick={reset} className={styles.resetBtn}><FaUndo /> Reset</button>
+                    </div>
+
+                    {/* Editor de Funções */}
+                    <FunctionEditor functions={functions} onFunctionsChange={setFunctions} />
                 </div>
 
-                {/* Robô */}
-                <div
-                    className={styles.robot}
-                    style={{
-                        transform: `translate(${robot.x * 60}px, ${robot.y * 60}px) rotate(${robot.rotation - 90}deg)`
-                    }}
-                >
-                    <img src={robotImg} alt="Robot" className={styles.robotImage} />
+                {/* COLUNA DIREITA - Tabuleiro */}
+                <div className={styles.boardPanel}>
+                    <div className={styles.board}>
+                        {/* Grid */}
+                        {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => (
+                            <div key={i} className={styles.cell} />
+                        ))}
+
+                        {/* Estrela */}
+                        <div
+                            className={styles.star}
+                            style={{
+                                transform: `translate(${starPosition.x * 60}px, ${starPosition.y * 60}px)`
+                            }}
+                        >
+                            <FaStar />
+                        </div>
+
+                        {/* Robô */}
+                        <div
+                            className={styles.robot}
+                            style={{
+                                transform: `translate(${robot.x * 60}px, ${robot.y * 60}px) rotate(${robot.rotation - 90}deg)`
+                            }}
+                        >
+                            <img src={robotImg} alt="Robot" className={styles.robotImage} />
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div className={styles.queueDisplay}>
-                <strong>Fila de Comandos:</strong> {commandQueue.length === 0 ? (
-                    <span style={{ color: '#999' }}> (vazia)</span>
-                ) : (
-                    commandQueue.map((c, i) => (
-                        <span key={i} style={{ margin: '0 4px' }}>
-                            {c === 'MOVE' ? <FaArrowUp size={12} /> :
-                                c === 'LEFT' ? <FaArrowLeft size={12} /> :
-                                    <FaArrowRight size={12} />}
-                        </span>
-                    ))
-                )}
-            </div>
-
-            <div className={styles.controls}>
-                <button onClick={() => addCommand('LEFT')}><FaArrowLeft /> Girar Esq</button>
-                <button onClick={() => addCommand('MOVE')}><FaArrowUp /> Frente</button>
-                <button onClick={() => addCommand('RIGHT')}>Girar Dir <FaArrowRight /></button>
-                <button onClick={runCommands} disabled={isExecuting || commandQueue.length === 0} className={styles.playBtn}>
-                    <FaPlay /> PLAY
-                </button>
-                <button onClick={reset} className={styles.resetBtn}><FaUndo /> Reset</button>
             </div>
         </div>
     );

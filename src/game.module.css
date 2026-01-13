@@ -4,6 +4,10 @@
     align-items: center;
     font-family: sans-serif;
     gap: 20px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
 }
 
 .levelHeader {
@@ -11,8 +15,9 @@
     align-items: center;
     gap: 2rem;
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
 .levelInfo {
@@ -23,7 +28,7 @@
 .levelInfo h2 {
     margin: 0;
     color: #fff;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
 }
 
 .navBtn {
@@ -58,6 +63,32 @@
     transform: scale(0.95);
 }
 
+/* Layout de duas colunas */
+.gameLayout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    width: 100%;
+    align-items: start;
+}
+
+/* Coluna Esquerda - Instruções */
+.instructionsPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Coluna Direita - Tabuleiro */
+.boardPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    position: sticky;
+    top: 100px;
+}
+
 .board {
     position: relative;
     display: grid;
@@ -65,6 +96,8 @@
     grid-template-rows: repeat(5, 60px);
     background-color: #2c3e50;
     border: 4px solid #34495e;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
 }
 
 .cell {
@@ -121,15 +154,16 @@
     object-fit: contain;
 }
 
-.controls {
-    display: flex;
-    gap: 10px;
-}
-
 .queueDisplay {
     margin: 10px 0;
     min-height: 24px;
     color: #333;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    width: 100%;
+    text-align: center;
 }
 
 /* Dark mode logic if needed, but keeping simple for now */
@@ -137,6 +171,14 @@
     .queueDisplay {
         color: #eee;
     }
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
 }
 
 button {
@@ -176,4 +218,54 @@ button:disabled {
 
 .resetBtn:hover {
     background: #c0392b;
+}
+
+.functionCallBtn {
+    background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+    font-weight: 700;
+}
+
+.functionCallBtn:hover {
+    background: linear-gradient(135deg, #7e22ce 0%, #6b21a8 100%);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .gameLayout {
+        grid-template-columns: 1fr;
+    }
+
+    .boardPanel {
+        position: static;
+        order: -1;
+        /* Tabuleiro vai para cima em mobile */
+    }
+}
+
+@media (max-width: 640px) {
+    .board {
+        grid-template-columns: repeat(5, 50px);
+        grid-template-rows: repeat(5, 50px);
+    }
+
+    .cell,
+    .robot,
+    .star {
+        width: 50px;
+        height: 50px;
+    }
+
+    .robotImage {
+        width: 50px;
+        height: 50px;
+    }
+
+    .controls {
+        gap: 5px;
+    }
+
+    button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
 }
