@@ -19,7 +19,8 @@ export interface LevelConfig {
   name: string;
   robotStart: Position;
   starPosition: Position;
-  obstacles?: Position[]; // Para futuras expansões
+  obstacles?: Position[];
+  gridSize?: number; // Tamanho do grid (ex: 5 para 5x5)
 }
 
 export interface FunctionDefinition {

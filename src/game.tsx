@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styles from './game.module.css';
 import type { RobotState, Command, LevelConfig, Position, FunctionDefinition } from './types/tipos.ts';
 import robotImg from './assets/robot.png';
-import { FaArrowLeft, FaArrowUp, FaArrowRight, FaPlay, FaUndo, FaStar, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowUp, FaArrowRight, FaPlay, FaUndo, FaStar, FaChevronLeft, FaChevronRight, FaSquare } from 'react-icons/fa';
 import { LEVELS as DEFAULT_LEVELS } from './levels/levelConfig';
 import FunctionEditor from './components/FunctionEditor';
 
-const GRID_SIZE = 5;
-const CELL_SIZE = 140; // Tamanho de cada célula em pixels (700px ÷ 5 = 140px)
+// GRID_SIZE será dinâmico baseado no nível
+const BOARD_SIZE = 700; // Tamanho total do tabuleiro em pixels
 const MAX_EXECUTION_STEPS = 1000; // Limite para evitar loops infinitos
 
 interface GameProps {
@@ -158,6 +158,9 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
         const level = getLevel(currentLevelId);
         if (!level) return;
 
+        const gridSize = level.gridSize || 5;
+        const obstacles = level.obstacles || [];
+
         // Expande as funções
         const expandedCommands = expandCommands(commandQueue);
         console.log('📋 Comandos expandidos:', expandedCommands);
@@ -179,10 +182,24 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
             const angle = ((rotation % 360) + 360) % 360;
 
             if (cmd === 'MOVE') {
-                if (angle === 0) y = Math.max(0, y - 1);
-                else if (angle === 90) x = Math.min(GRID_SIZE - 1, x + 1);
-                else if (angle === 180) y = Math.min(GRID_SIZE - 1, y + 1);
-                else if (angle === 270) x = Math.max(0, x - 1);
+                let nextX = x;
+                let nextY = y;
+
+                if (angle === 0) nextY = Math.max(0, y - 1);
+                else if (angle === 90) nextX = Math.min(gridSize - 1, x + 1);
+                else if (angle === 180) nextY = Math.min(gridSize - 1, y + 1);
+                else if (angle === 270) nextX = Math.max(0, x - 1);
+
+                // Verifica colisão com parede
+                const isWall = obstacles.some(obs => obs.x === nextX && obs.y === nextY);
+                if (!isWall) {
+                    x = nextX;
+                    y = nextY;
+                } else {
+                    // Feedback visual de colisão (opcional, pode ser adicionado depois)
+                    console.log('🚧 Colisão com parede!');
+                }
+
             } else if (cmd === 'LEFT') {
                 rotation -= 90;
             } else if (cmd === 'RIGHT') {
@@ -332,17 +349,45 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
 
                 {/* COLUNA DIREITA - Tabuleiro */}
                 <div className={styles.boardPanel}>
-                    <div className={styles.board}>
-                        {/* Grid */}
-                        {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => (
-                            <div key={i} className={styles.cell} />
-                        ))}
+                    <div
+                        className={styles.board}
+                        style={{
+                            gridTemplateColumns: `repeat(${getLevel(currentLevelId)?.gridSize || 5}, 1fr)`,
+                            gridTemplateRows: `repeat(${getLevel(currentLevelId)?.gridSize || 5}, 1fr)`
+                        }}
+                    >
+                        {(() => {
+                            const level = getLevel(currentLevelId);
+                            const gridSize = level?.gridSize || 5;
+                            const cellSize = BOARD_SIZE / gridSize;
+                            const obstacles = level?.obstacles || [];
+
+                            // Gera células
+                            const cells = [];
+                            for (let y = 0; y < gridSize; y++) {
+                                for (let x = 0; x < gridSize; x++) {
+                                    const isWall = obstacles.some(w => w.x === x && w.y === y);
+                                    cells.push(
+                                        <div
+                                            key={`${x}-${y}`}
+                                            className={`${styles.cell} ${isWall ? styles.wall : ''}`}
+                                            title={isWall ? "Parede" : `Posição (${x}, ${y})`}
+                                        >
+                                            {isWall && <FaSquare style={{ color: '#4b5563', fontSize: '1.5em', opacity: 0.5 }} />}
+                                        </div>
+                                    );
+                                }
+                            }
+                            return cells;
+                        })()}
 
                         {/* Estrela */}
                         <div
                             className={styles.star}
                             style={{
-                                transform: `translate(${starPosition.x * CELL_SIZE}px, ${starPosition.y * CELL_SIZE}px)`
+                                width: `${BOARD_SIZE / (getLevel(currentLevelId)?.gridSize || 5)}px`,
+                                height: `${BOARD_SIZE / (getLevel(currentLevelId)?.gridSize || 5)}px`,
+                                transform: `translate(${starPosition.x * (BOARD_SIZE / (getLevel(currentLevelId)?.gridSize || 5))}px, ${starPosition.y * (BOARD_SIZE / (getLevel(currentLevelId)?.gridSize || 5))}px)`
                             }}
                         >
                             <FaStar />
@@ -352,7 +397,9 @@ const Game: React.FC<GameProps> = ({ customLevels }) => {
                         <div
                             className={styles.robot}
                             style={{
-                                transform: `translate(${robot.x * CELL_SIZE}px, ${robot.y * CELL_SIZE}px) rotate(${robot.rotation - 90}deg)`
+                                width: `${BOARD_SIZE / (getLevel(currentLevelId)?.gridSize || 5)}px`,
+                                height: `${BOARD_SIZE / (getLevel(currentLevelId)?.gridSize || 5)}px`,
+                                transform: `translate(${robot.x * (BOARD_SIZE / (getLevel(currentLevelId)?.gridSize || 5))}px, ${robot.y * (BOARD_SIZE / (getLevel(currentLevelId)?.gridSize || 5))}px) rotate(${robot.rotation - 90}deg)`
                             }}
                         >
                             <img src={robotImg} alt="Robot" className={styles.robotImage} />

@@ -90,8 +90,9 @@
 .board {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(5, 140px);
-    grid-template-rows: repeat(5, 140px);
+    width: 700px;
+    height: 700px;
+    /* Grid template columns/rows definidos via inline style */
     background-color: #2c3e50;
     border: 4px solid #34495e;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -99,15 +100,24 @@
 }
 
 .cell {
-    width: 140px;
-    height: 140px;
+    /* Tamanho definido pelo grid */
+    width: 100%;
+    height: 100%;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wall {
+    background: #4b5563;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    border-color: #374151;
 }
 
 .robot {
     position: absolute;
-    width: 140px;
-    height: 140px;
+    /* width/height definidos via inline style */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -117,18 +127,19 @@
 
 .star {
     position: absolute;
-    width: 140px;
-    height: 140px;
+    /* width/height via inline */
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffd700;
-    font-size: 64px;
+    /* Font size controlado pelo SVG width/height */
     z-index: 5;
     /* Removida a animação que sobrescreve o transform */
 }
 
 .star svg {
+    width: 60%;
+    height: 60%;
     animation: pulse 1.5s infinite ease-in-out;
 }
 
@@ -147,8 +158,8 @@
 }
 
 .robotImage {
-    width: 120px;
-    height: 120px;
+    width: 80%;
+    height: 80%;
     object-fit: contain;
 }
 
