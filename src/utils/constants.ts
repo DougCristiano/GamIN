@@ -1,6 +1,6 @@
 // Constantes globais do jogo
 
-export const BOARD_SIZE = 700; // Tamanho total do tabuleiro em pixels
+export const BOARD_SIZE = 600; // Tamanho total do tabuleiro em pixels
 export const MAX_EXECUTION_STEPS = 1000; // Limite para evitar loops infinitos
 export const MAX_RECURSION_DEPTH = 50; // Profundidade máxima de recursão
 export const MAX_FUNCTION_CALLS = 10; // Máximo de chamadas recursivas por função

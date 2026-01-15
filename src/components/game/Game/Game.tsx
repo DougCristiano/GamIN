@@ -1,0 +1,188 @@
+/**
+ * Game Component (Refactored)
+ * Main game component using custom hooks and extracted components
+ */
+
+import { FaStar, FaSquare } from 'react-icons/fa';
+import type { LevelConfig } from '@/types';
+import { BOARD_SIZE } from '@/utils/constants';
+import { useGame, useCommands } from '@/hooks';
+import {
+  FunctionEditor,
+  CommandQueue,
+  ControlPanel,
+  LevelNavigation,
+  RecursionWarning,
+} from '@/components';
+import robotImg from '@/assets/robot.png';
+import styles from './Game.module.css';
+
+interface GameProps {
+  customLevels?: LevelConfig[] | null;
+}
+
+export const Game: React.FC<GameProps> = ({ customLevels }) => {
+  // Game state management
+  const {
+    currentLevel,
+    currentLevelId,
+    levelName,
+    robot,
+    starPosition,
+    totalLevels,
+    isFirstLevel,
+    isLastLevel,
+    nextLevel,
+    previousLevel,
+    setCurrentLevelId,
+    setRobot,
+    resetLevel,
+  } = useGame({ customLevels });
+
+  // Command management
+  const {
+    commandQueue,
+    functions,
+    isExecuting,
+    recursionWarning,
+    addCommand,
+    clearQueue,
+    setFunctions,
+    clearWarning,
+    runCommands,
+  } = useCommands({
+    onWin: () => {
+      if (currentLevelId < totalLevels) {
+        alert(`✅ ${levelName} Completado! Indo para o próximo nível...`);
+        setCurrentLevelId(currentLevelId + 1);
+      } else {
+        alert('🎉 Parabéns! Você completou todos os níveis!');
+        setCurrentLevelId(1);
+      }
+    },
+  });
+
+  // Handle play button
+  const handlePlay = async () => {
+    if (!currentLevel) return;
+
+    const gridSize = currentLevel.gridSize || 5;
+    const obstacles = currentLevel.obstacles || [];
+
+    await runCommands(robot, setRobot, starPosition, gridSize, obstacles);
+  };
+
+  // Handle reset
+  const handleReset = () => {
+    resetLevel();
+    clearQueue();
+  };
+
+  // Render grid cells
+  const renderGrid = () => {
+    if (!currentLevel) return null;
+
+    const gridSize = currentLevel.gridSize || 5;
+    const obstacles = currentLevel.obstacles || [];
+
+    const cells = [];
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        const isWall = obstacles.some(w => w.x === x && w.y === y);
+        cells.push(
+          <div
+            key={`${x}-${y}`}
+            className={`${styles.cell} ${isWall ? styles.wall : ''}`}
+            title={isWall ? 'Parede' : `Posição (${x}, ${y})`}
+          >
+            {isWall && <FaSquare style={{ color: '#4b5563', fontSize: '1.5em', opacity: 0.5 }} />}
+          </div>
+        );
+      }
+    }
+    return cells;
+  };
+
+  const gridSize = currentLevel?.gridSize || 5;
+  const cellSize = BOARD_SIZE / gridSize;
+
+  return (
+    <div className={styles.container}>
+      {/* Level Navigation */}
+      <LevelNavigation
+        levelName={levelName}
+        currentLevelId={currentLevelId}
+        totalLevels={totalLevels}
+        onPrevious={previousLevel}
+        onNext={nextLevel}
+        isFirstLevel={isFirstLevel}
+        isLastLevel={isLastLevel}
+      />
+
+      {/* Main Game Layout */}
+      <div className={styles.gameLayout}>
+        {/* Left Column - Instructions */}
+        <div className={styles.instructionsPanel}>
+          {/* Command Queue */}
+          <CommandQueue commands={commandQueue} />
+
+          {/* Recursion Warning */}
+          {recursionWarning && (
+            <RecursionWarning message={recursionWarning} onClose={clearWarning} />
+          )}
+
+          {/* Control Panel */}
+          <ControlPanel
+            onAddCommand={addCommand}
+            onPlay={handlePlay}
+            onReset={handleReset}
+            isExecuting={isExecuting}
+            hasCommands={commandQueue.length > 0}
+          />
+
+          {/* Function Editor */}
+          <FunctionEditor functions={functions} onFunctionsChange={setFunctions} />
+        </div>
+
+        {/* Right Column - Board */}
+        <div className={styles.boardPanel}>
+          <div
+            className={styles.board}
+            style={{
+              gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+              gridTemplateRows: `repeat(${gridSize}, 1fr)`,
+            }}
+          >
+            {renderGrid()}
+
+            {/* Star */}
+            <div
+              className={styles.star}
+              style={{
+                width: `${cellSize}px`,
+                height: `${cellSize}px`,
+                transform: `translate(${starPosition.x * cellSize}px, ${starPosition.y * cellSize}px)`,
+              }}
+            >
+              <FaStar />
+            </div>
+
+            {/* Robot */}
+            <div
+              className={styles.robot}
+              style={{
+                width: `${cellSize}px`,
+                height: `${cellSize}px`,
+                transform: `translate(${robot.x * cellSize}px, ${robot.y * cellSize}px) rotate(${robot.rotation - 90}deg)`,
+              }}
+            >
+              <img src={robotImg} alt="Robot" className={styles.robotImage} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Game;
