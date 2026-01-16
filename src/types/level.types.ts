@@ -16,6 +16,10 @@ export interface LevelConfig {
   starPositions: Position[];
   /** Optional obstacle positions */
   obstacles?: Position[];
+  /** Optional key positions - must be collected to open doors */
+  keys?: Position[];
+  /** Optional door positions - block passage until key is collected */
+  doors?: Position[];
   /** Grid size (e.g., 5 for 5x5) */
   gridSize?: number;
 }

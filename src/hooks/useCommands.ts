@@ -32,8 +32,12 @@ interface UseCommandsReturn {
     starPositions: Position[],
     collectedStars: Set<string>,
     collectStar: (position: Position) => void,
+    hasKey: boolean,
+    collectKey: () => void,
     gridSize: number,
-    obstacles: Position[]
+    obstacles: Position[],
+    keys: Position[],
+    doors: Position[]
   ) => Promise<boolean>;
   reset: () => void;
 }
@@ -86,8 +90,12 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
       starPositions: Position[],
       collectedStars: Set<string>,
       collectStar: (position: Position) => void,
+      hasKey: boolean,
+      collectKey: () => void,
       gridSize: number,
-      obstacles: Position[]
+      obstacles: Position[],
+      keys: Position[] = [],
+      doors: Position[] = []
     ): Promise<boolean> => {
       setIsExecuting(true);
       setRecursionWarning(null);
@@ -114,6 +122,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
 
       let currentRobot = { ...robot };
       let currentCollectedStars = new Set(collectedStars);
+      let currentHasKey = hasKey;
 
       for (let i = 0; i < expandedCommands.length; i++) {
         const cmd = expandedCommands[i];
@@ -121,12 +130,30 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
         // Delay between commands for animation
         await new Promise(resolve => setTimeout(resolve, EXECUTION_DELAY));
 
+        // Check if next position has a door and we don't have the key
+        const nextRobot = executeCommand(currentRobot, cmd, gridSize, obstacles);
+        const isDoor = doors.some(d => d.x === nextRobot.x && d.y === nextRobot.y);
+
+        if (isDoor && !currentHasKey) {
+          // Can't move through door without key - stay in place
+          console.log('🚪 Porta bloqueada! Chave necessária.');
+          continue; // Skip this movement
+        }
+
         // Execute command
-        currentRobot = executeCommand(currentRobot, cmd, gridSize, obstacles);
+        currentRobot = nextRobot;
         setRobot(currentRobot);
 
-        // Check if robot is on any uncollected star
+        // Check if robot is on a key
         const robotPos = { x: currentRobot.x, y: currentRobot.y };
+        const isOnKey = keys.some(k => k.x === robotPos.x && k.y === robotPos.y);
+        if (isOnKey && !currentHasKey) {
+          collectKey();
+          currentHasKey = true;
+          console.log('🔑 Chave coletada!');
+        }
+
+        // Check if robot is on any uncollected star
         for (const starPos of starPositions) {
           const starKey = `${starPos.x},${starPos.y}`;
           if (

@@ -140,6 +140,46 @@
   animation: pulse 1.5s infinite ease-in-out;
 }
 
+/* ========================================
+   KEY
+   ======================================== */
+.key {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fbbf24;
+  /* Golden yellow */
+  z-index: 5;
+  filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.6));
+}
+
+.key svg {
+  width: 50%;
+  height: 50%;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* ========================================
+   DOOR
+   ======================================== */
+.door {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b5cf6;
+  /* Purple */
+  z-index: 5;
+  filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.6));
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.door svg {
+  width: 70%;
+  height: 70%;
+}
+
 @keyframes pulse {
 
   0%,

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaTimes, FaRobot, FaStar, FaSave, FaPlus, FaTrash, FaSquare } from 'react-icons/fa';
+import { FaTimes, FaRobot, FaStar, FaSave, FaPlus, FaTrash, FaSquare, FaKey, FaDoorOpen } from 'react-icons/fa';
 import type { LevelConfig } from '@/types';
 import { LEVELS } from '@/data';
 import styles from './LevelEditor.module.css';
@@ -11,7 +11,7 @@ interface LevelEditorProps {
   asPage?: boolean;
 }
 
-type EditorMode = 'robot' | 'star' | 'wall';
+type EditorMode = 'robot' | 'star' | 'wall' | 'key' | 'door';
 
 const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPage = false }) => {
   const [levels, setLevels] = useState<LevelConfig[]>([...LEVELS]);
@@ -42,6 +42,8 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
     const updatedLevel = { ...currentLevel };
     const walls = updatedLevel.obstacles || [];
     const stars = updatedLevel.starPositions || [];
+    const keys = updatedLevel.keys || [];
+    const doors = updatedLevel.doors || [];
 
     const wallIndex = walls.findIndex(w => w.x === x && w.y === y);
     const isWall = wallIndex !== -1;
@@ -67,6 +69,26 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       } else {
         // Add star
         updatedLevel.starPositions = [...stars, { x, y }];
+      }
+    } else if (editorMode === 'key') {
+      // Check if key already exists at this position
+      const keyIndex = keys.findIndex(k => k.x === x && k.y === y);
+      if (keyIndex !== -1) {
+        // Remove key
+        updatedLevel.keys = keys.filter((_, i) => i !== keyIndex);
+      } else {
+        // Add key
+        updatedLevel.keys = [...keys, { x, y }];
+      }
+    } else if (editorMode === 'door') {
+      // Check if door already exists at this position
+      const doorIndex = doors.findIndex(d => d.x === x && d.y === y);
+      if (doorIndex !== -1) {
+        // Remove door
+        updatedLevel.doors = doors.filter((_, i) => i !== doorIndex);
+      } else {
+        // Add door
+        updatedLevel.doors = [...doors, { x, y }];
       }
     } else if (editorMode === 'wall') {
       if (
@@ -158,17 +180,21 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         const isRobot = currentLevel.robotStart.x === x && currentLevel.robotStart.y === y;
         const isStar = currentLevel.starPositions.some(s => s.x === x && s.y === y);
         const isWall = currentLevel.obstacles?.some(w => w.x === x && w.y === y);
+        const isKey = currentLevel.keys?.some(k => k.x === x && k.y === y);
+        const isDoor = currentLevel.doors?.some(d => d.x === x && d.y === y);
 
         cells.push(
           <div
             key={`${x}-${y}`}
-            className={`${styles.gridCell} ${isRobot ? styles.robot : ''} ${isStar ? styles.star : ''} ${isWall ? styles.wall : ''}`}
+            className={`${styles.gridCell} ${isRobot ? styles.robot : ''} ${isStar ? styles.star : ''} ${isWall ? styles.wall : ''} ${isKey ? styles.key : ''} ${isDoor ? styles.door : ''}`}
             onClick={() => handleCellClick(x, y)}
             title={`Posição (${x}, ${y})`}
           >
             {isRobot && <FaRobot />}
             {isStar && <FaStar />}
             {isWall && <FaSquare style={{ fontSize: '0.8em', opacity: 0.7 }} />}
+            {isKey && <FaKey />}
+            {isDoor && <FaDoorOpen />}
           </div>
         );
       }
@@ -262,6 +288,18 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
                 onClick={() => setEditorMode('star')}
               >
                 <FaStar /> Estrela
+              </button>
+              <button
+                className={`${styles.modeBtn} ${editorMode === 'key' ? styles.active : ''}`}
+                onClick={() => setEditorMode('key')}
+              >
+                <FaKey /> Chave
+              </button>
+              <button
+                className={`${styles.modeBtn} ${editorMode === 'door' ? styles.active : ''}`}
+                onClick={() => setEditorMode('door')}
+              >
+                <FaDoorOpen /> Porta
               </button>
               <button
                 className={`${styles.modeBtn} ${editorMode === 'wall' ? styles.active : ''}`}

@@ -3,7 +3,7 @@
  * Main game component using custom hooks and extracted components
  */
 
-import { FaStar, FaSquare } from 'react-icons/fa';
+import { FaStar, FaSquare, FaKey, FaDoorOpen } from 'react-icons/fa';
 import type { LevelConfig } from '@/types';
 import { BOARD_SIZE } from '@/utils/constants';
 import { useGame, useCommands } from '@/hooks';
@@ -30,6 +30,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     robot,
     starPositions,
     collectedStars,
+    hasKey,
     totalLevels,
     isFirstLevel,
     isLastLevel,
@@ -39,6 +40,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     setRobot,
     resetLevel,
     collectStar,
+    collectKey,
   } = useGame({ customLevels });
 
   // Command management
@@ -70,6 +72,8 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
 
     const gridSize = currentLevel.gridSize || 5;
     const obstacles = currentLevel.obstacles || [];
+    const keys = currentLevel.keys || [];
+    const doors = currentLevel.doors || [];
 
     await runCommands(
       robot,
@@ -77,8 +81,12 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
       starPositions,
       collectedStars,
       collectStar,
+      hasKey,
+      collectKey,
       gridSize,
-      obstacles
+      obstacles,
+      keys,
+      doors
     );
   };
 
@@ -186,6 +194,41 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
                 </div>
               );
             })}
+
+            {/* Keys */}
+            {currentLevel?.keys?.map((keyPos, index) => (
+              <div
+                key={`key-${index}`}
+                className={styles.key}
+                style={{
+                  width: `${cellSize}px`,
+                  height: `${cellSize}px`,
+                  transform: `translate(${keyPos.x * cellSize}px, ${keyPos.y * cellSize}px)`,
+                  opacity: hasKey ? 0.3 : 1,
+                  filter: hasKey ? 'grayscale(100%)' : 'none',
+                }}
+                title={hasKey ? 'Chave coletada' : 'Chave'}
+              >
+                <FaKey />
+              </div>
+            ))}
+
+            {/* Doors */}
+            {currentLevel?.doors?.map((doorPos, index) => (
+              <div
+                key={`door-${index}`}
+                className={styles.door}
+                style={{
+                  width: `${cellSize}px`,
+                  height: `${cellSize}px`,
+                  transform: `translate(${doorPos.x * cellSize}px, ${doorPos.y * cellSize}px)`,
+                  opacity: hasKey ? 0.5 : 1,
+                }}
+                title={hasKey ? 'Porta aberta' : 'Porta trancada'}
+              >
+                <FaDoorOpen />
+              </div>
+            ))}
 
             {/* Robot */}
             <div

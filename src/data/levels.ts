@@ -47,6 +47,21 @@ export const LEVELS: LevelConfig[] = [
     ],
     gridSize: 5,
   },
+  {
+    id: 5,
+    name: 'Nível 5 - Chave e Porta',
+    robotStart: { x: 0, y: 2 },
+    starPositions: [{ x: 4, y: 2 }],
+    keys: [{ x: 0, y: 0 }],
+    doors: [{ x: 2, y: 2 }],
+    obstacles: [
+      { x: 2, y: 0 },
+      { x: 2, y: 1 },
+      { x: 2, y: 3 },
+      { x: 2, y: 4 },
+    ],
+    gridSize: 5,
+  },
 ];
 
 /**

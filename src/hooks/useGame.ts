@@ -19,6 +19,7 @@ interface UseGameReturn {
   robot: RobotState;
   starPositions: Position[];
   collectedStars: Set<string>;
+  hasKey: boolean;
   totalLevels: number;
   isFirstLevel: boolean;
   isLastLevel: boolean;
@@ -31,6 +32,7 @@ interface UseGameReturn {
   setRobot: React.Dispatch<React.SetStateAction<RobotState>>;
   resetLevel: () => void;
   collectStar: (position: Position) => void;
+  collectKey: () => void;
 }
 
 export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
@@ -51,6 +53,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     initialLevel.starPositions || []
   );
   const [collectedStars, setCollectedStars] = useState<Set<string>>(new Set());
+  const [hasKey, setHasKey] = useState<boolean>(false);
   const [levelName, setLevelName] = useState(initialLevel.name);
 
   // Get current level config
@@ -75,6 +78,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
         });
         setStarPositions(level.starPositions || []);
         setCollectedStars(new Set());
+        setHasKey(false);
         setLevelName(level.name);
 
         console.log('✅ Level loaded successfully');
@@ -122,6 +126,11 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     setCollectedStars(prev => new Set(prev).add(key));
   }, []);
 
+  // Collect the key
+  const collectKey = useCallback(() => {
+    setHasKey(true);
+  }, []);
+
   return {
     // State
     currentLevel,
@@ -130,6 +139,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     robot,
     starPositions,
     collectedStars,
+    hasKey,
     totalLevels: activeLevels.length,
     isFirstLevel: currentLevelId === 1,
     isLastLevel: currentLevelId === activeLevels.length,
@@ -142,6 +152,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     setRobot,
     resetLevel,
     collectStar,
+    collectKey,
   };
 };
 

@@ -272,6 +272,16 @@
   border-color: #374151;
 }
 
+.gridCell.key {
+  background: #fbbf24;
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+}
+
+.gridCell.door {
+  background: #8b5cf6;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+}
+
 .actions {
   display: flex;
   gap: 1rem;
