@@ -10,4 +10,4 @@ export type {
   FunctionDefinition,
   ExecutionState,
 } from './game.types';
-export type { LevelConfig, LevelEditorState } from './level.types';
+export type { LevelConfig, LevelEditorState, KeyItem, DoorItem } from './level.types';

@@ -4,6 +4,18 @@
 
 import type { Position } from './game.types';
 
+/** Key with unique ID and color */
+export interface KeyItem {
+  id: string; // e.g., 'red', 'blue', 'green'
+  position: Position;
+}
+
+/** Door with unique ID and color */
+export interface DoorItem {
+  id: string; // Must match a key ID to be opened
+  position: Position;
+}
+
 /** Configuration for a game level */
 export interface LevelConfig {
   /** Unique identifier for the level */
@@ -16,10 +28,10 @@ export interface LevelConfig {
   starPositions: Position[];
   /** Optional obstacle positions */
   obstacles?: Position[];
-  /** Optional key positions - must be collected to open doors */
-  keys?: Position[];
-  /** Optional door positions - block passage until key is collected */
-  doors?: Position[];
+  /** Optional key items with unique IDs */
+  keys?: KeyItem[];
+  /** Optional door items with unique IDs */
+  doors?: DoorItem[];
   /** Grid size (e.g., 5 for 5x5) */
   gridSize?: number;
 }

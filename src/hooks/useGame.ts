@@ -19,7 +19,7 @@ interface UseGameReturn {
   robot: RobotState;
   starPositions: Position[];
   collectedStars: Set<string>;
-  hasKey: boolean;
+  collectedKeys: Set<string>;
   totalLevels: number;
   isFirstLevel: boolean;
   isLastLevel: boolean;
@@ -32,7 +32,7 @@ interface UseGameReturn {
   setRobot: React.Dispatch<React.SetStateAction<RobotState>>;
   resetLevel: () => void;
   collectStar: (position: Position) => void;
-  collectKey: () => void;
+  collectKey: (keyId: string) => void;
 }
 
 export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
@@ -53,7 +53,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     initialLevel.starPositions || []
   );
   const [collectedStars, setCollectedStars] = useState<Set<string>>(new Set());
-  const [hasKey, setHasKey] = useState<boolean>(false);
+  const [collectedKeys, setCollectedKeys] = useState<Set<string>>(new Set());
   const [levelName, setLevelName] = useState(initialLevel.name);
 
   // Get current level config
@@ -71,14 +71,18 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
         console.log('🤖 Robot start:', level.robotStart);
         console.log('⭐ Star positions:', level.starPositions);
 
+        // Migração de dados antigos: converter starPosition para starPositions
+        const starPositions = level.starPositions ||
+          ((level as any).starPosition ? [(level as any).starPosition] : []);
+
         setRobot({
           x: level.robotStart.x,
           y: level.robotStart.y,
           rotation: 90,
         });
-        setStarPositions(level.starPositions || []);
+        setStarPositions(starPositions);
         setCollectedStars(new Set());
-        setHasKey(false);
+        setCollectedKeys(new Set());
         setLevelName(level.name);
 
         console.log('✅ Level loaded successfully');
@@ -126,9 +130,9 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     setCollectedStars(prev => new Set(prev).add(key));
   }, []);
 
-  // Collect the key
-  const collectKey = useCallback(() => {
-    setHasKey(true);
+  // Collect a key by ID
+  const collectKey = useCallback((keyId: string) => {
+    setCollectedKeys(prev => new Set(prev).add(keyId));
   }, []);
 
   return {
@@ -139,7 +143,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     robot,
     starPositions,
     collectedStars,
-    hasKey,
+    collectedKeys,
     totalLevels: activeLevels.length,
     isFirstLevel: currentLevelId === 1,
     isLastLevel: currentLevelId === activeLevels.length,

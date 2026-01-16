@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { Command, FunctionDefinition, RobotState, Position } from '@/types';
+import type { Command, FunctionDefinition, RobotState, Position, KeyItem, DoorItem } from '@/types';
 import { expandCommands, executeCommand, checkWin } from '@/services';
 import { MAX_EXECUTION_STEPS, EXECUTION_DELAY } from '@/utils/constants';
 
@@ -32,12 +32,12 @@ interface UseCommandsReturn {
     starPositions: Position[],
     collectedStars: Set<string>,
     collectStar: (position: Position) => void,
-    hasKey: boolean,
-    collectKey: () => void,
+    collectedKeys: Set<string>,
+    collectKey: (keyId: string) => void,
     gridSize: number,
     obstacles: Position[],
-    keys: Position[],
-    doors: Position[]
+    keys: KeyItem[],
+    doors: DoorItem[]
   ) => Promise<boolean>;
   reset: () => void;
 }
@@ -90,12 +90,12 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
       starPositions: Position[],
       collectedStars: Set<string>,
       collectStar: (position: Position) => void,
-      hasKey: boolean,
-      collectKey: () => void,
+      collectedKeys: Set<string>,
+      collectKey: (keyId: string) => void,
       gridSize: number,
       obstacles: Position[],
-      keys: Position[] = [],
-      doors: Position[] = []
+      keys: KeyItem[] = [],
+      doors: DoorItem[] = []
     ): Promise<boolean> => {
       setIsExecuting(true);
       setRecursionWarning(null);
@@ -122,7 +122,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
 
       let currentRobot = { ...robot };
       let currentCollectedStars = new Set(collectedStars);
-      let currentHasKey = hasKey;
+      let currentCollectedKeys = new Set(collectedKeys);
 
       for (let i = 0; i < expandedCommands.length; i++) {
         const cmd = expandedCommands[i];
@@ -132,11 +132,11 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
 
         // Check if next position has a door and we don't have the key
         const nextRobot = executeCommand(currentRobot, cmd, gridSize, obstacles);
-        const isDoor = doors.some(d => d.x === nextRobot.x && d.y === nextRobot.y);
+        const doorAtPosition = doors.find(d => d.position.x === nextRobot.x && d.position.y === nextRobot.y);
 
-        if (isDoor && !currentHasKey) {
-          // Can't move through door without key - stay in place
-          console.log('🚪 Porta bloqueada! Chave necessária.');
+        if (doorAtPosition && !currentCollectedKeys.has(doorAtPosition.id)) {
+          // Can't move through door without matching key - stay in place
+          console.log(`🚪 Porta ${doorAtPosition.id} bloqueada! Chave ${doorAtPosition.id} necessária.`);
           continue; // Skip this movement
         }
 
@@ -146,11 +146,11 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
 
         // Check if robot is on a key
         const robotPos = { x: currentRobot.x, y: currentRobot.y };
-        const isOnKey = keys.some(k => k.x === robotPos.x && k.y === robotPos.y);
-        if (isOnKey && !currentHasKey) {
-          collectKey();
-          currentHasKey = true;
-          console.log('🔑 Chave coletada!');
+        const keyAtPosition = keys.find(k => k.position.x === robotPos.x && k.position.y === robotPos.y);
+        if (keyAtPosition && !currentCollectedKeys.has(keyAtPosition.id)) {
+          collectKey(keyAtPosition.id);
+          currentCollectedKeys.add(keyAtPosition.id);
+          console.log(`🔑 Chave ${keyAtPosition.id} coletada!`);
         }
 
         // Check if robot is on any uncollected star

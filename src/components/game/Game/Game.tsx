@@ -6,6 +6,7 @@
 import { FaStar, FaSquare, FaKey, FaDoorOpen } from 'react-icons/fa';
 import type { LevelConfig } from '@/types';
 import { BOARD_SIZE } from '@/utils/constants';
+import { getKeyColor } from '@/utils/keyColors';
 import { useGame, useCommands } from '@/hooks';
 import {
   FunctionEditor,
@@ -30,7 +31,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     robot,
     starPositions,
     collectedStars,
-    hasKey,
+    collectedKeys,
     totalLevels,
     isFirstLevel,
     isLastLevel,
@@ -81,7 +82,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
       starPositions,
       collectedStars,
       collectStar,
-      hasKey,
+      collectedKeys,
       collectKey,
       gridSize,
       obstacles,
@@ -196,39 +197,49 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             })}
 
             {/* Keys */}
-            {currentLevel?.keys?.map((keyPos, index) => (
-              <div
-                key={`key-${index}`}
-                className={styles.key}
-                style={{
-                  width: `${cellSize}px`,
-                  height: `${cellSize}px`,
-                  transform: `translate(${keyPos.x * cellSize}px, ${keyPos.y * cellSize}px)`,
-                  opacity: hasKey ? 0.3 : 1,
-                  filter: hasKey ? 'grayscale(100%)' : 'none',
-                }}
-                title={hasKey ? 'Chave coletada' : 'Chave'}
-              >
-                <FaKey />
-              </div>
-            ))}
+            {currentLevel?.keys?.map((keyItem) => {
+              const isCollected = collectedKeys.has(keyItem.id);
+              const keyColor = getKeyColor(keyItem.id);
+              return (
+                <div
+                  key={`key-${keyItem.id}`}
+                  className={styles.key}
+                  style={{
+                    width: `${cellSize}px`,
+                    height: `${cellSize}px`,
+                    transform: `translate(${keyItem.position.x * cellSize}px, ${keyItem.position.y * cellSize}px)`,
+                    opacity: isCollected ? 0.3 : 1,
+                    filter: isCollected ? 'grayscale(100%)' : 'none',
+                    color: keyColor,
+                  }}
+                  title={isCollected ? `Chave ${keyItem.id} coletada` : `Chave ${keyItem.id}`}
+                >
+                  <FaKey />
+                </div>
+              );
+            })}
 
             {/* Doors */}
-            {currentLevel?.doors?.map((doorPos, index) => (
-              <div
-                key={`door-${index}`}
-                className={styles.door}
-                style={{
-                  width: `${cellSize}px`,
-                  height: `${cellSize}px`,
-                  transform: `translate(${doorPos.x * cellSize}px, ${doorPos.y * cellSize}px)`,
-                  opacity: hasKey ? 0.5 : 1,
-                }}
-                title={hasKey ? 'Porta aberta' : 'Porta trancada'}
-              >
-                <FaDoorOpen />
-              </div>
-            ))}
+            {currentLevel?.doors?.map((doorItem) => {
+              const isOpen = collectedKeys.has(doorItem.id);
+              const doorColor = getKeyColor(doorItem.id);
+              return (
+                <div
+                  key={`door-${doorItem.id}`}
+                  className={styles.door}
+                  style={{
+                    width: `${cellSize}px`,
+                    height: `${cellSize}px`,
+                    transform: `translate(${doorItem.position.x * cellSize}px, ${doorItem.position.y * cellSize}px)`,
+                    opacity: isOpen ? 0.5 : 1,
+                    color: doorColor,
+                  }}
+                  title={isOpen ? `Porta ${doorItem.id} aberta` : `Porta ${doorItem.id} trancada`}
+                >
+                  <FaDoorOpen />
+                </div>
+              );
+            })}
 
             {/* Robot */}
             <div

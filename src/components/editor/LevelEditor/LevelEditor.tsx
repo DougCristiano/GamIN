@@ -86,23 +86,23 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       }
     } else if (editorMode === 'key') {
       // Check if key already exists at this position
-      const keyIndex = keys.findIndex(k => k.x === x && k.y === y);
+      const keyIndex = keys.findIndex(k => k.position.x === x && k.position.y === y);
       if (keyIndex !== -1) {
         // Remove key
         updatedLevel.keys = keys.filter((_, i) => i !== keyIndex);
       } else {
-        // Add key
-        updatedLevel.keys = [...keys, { x, y }];
+        // Add key with default color (can be changed later)
+        updatedLevel.keys = [...keys, { id: 'red', position: { x, y } }];
       }
     } else if (editorMode === 'door') {
       // Check if door already exists at this position
-      const doorIndex = doors.findIndex(d => d.x === x && d.y === y);
+      const doorIndex = doors.findIndex(d => d.position.x === x && d.position.y === y);
       if (doorIndex !== -1) {
         // Remove door
         updatedLevel.doors = doors.filter((_, i) => i !== doorIndex);
       } else {
-        // Add door
-        updatedLevel.doors = [...doors, { x, y }];
+        // Add door with default color (can be changed later)
+        updatedLevel.doors = [...doors, { id: 'red', position: { x, y } }];
       }
     } else if (editorMode === 'wall') {
       if (
@@ -204,8 +204,8 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         const isRobot = currentLevel.robotStart.x === x && currentLevel.robotStart.y === y;
         const isStar = currentLevel.starPositions.some(s => s.x === x && s.y === y);
         const isWall = currentLevel.obstacles?.some(w => w.x === x && w.y === y);
-        const isKey = currentLevel.keys?.some(k => k.x === x && k.y === y);
-        const isDoor = currentLevel.doors?.some(d => d.x === x && d.y === y);
+        const isKey = currentLevel.keys?.some(k => k.position.x === x && k.position.y === y);
+        const isDoor = currentLevel.doors?.some(d => d.position.x === x && d.position.y === y);
 
         cells.push(
           <div
