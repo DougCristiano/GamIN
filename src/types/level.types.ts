@@ -12,8 +12,8 @@ export interface LevelConfig {
   name: string;
   /** Starting position of the robot */
   robotStart: Position;
-  /** Position of the star (goal) */
-  starPosition: Position;
+  /** Positions of the stars (goals) - supports multiple stars */
+  starPositions: Position[];
   /** Optional obstacle positions */
   obstacles?: Position[];
   /** Grid size (e.g., 5 for 5x5) */

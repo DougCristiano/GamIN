@@ -29,7 +29,9 @@ interface UseCommandsReturn {
   runCommands: (
     robot: RobotState,
     setRobot: (robot: RobotState) => void,
-    starPosition: Position,
+    starPositions: Position[],
+    collectedStars: Set<string>,
+    collectStar: (position: Position) => void,
     gridSize: number,
     obstacles: Position[]
   ) => Promise<boolean>;
@@ -81,7 +83,9 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
     async (
       robot: RobotState,
       setRobot: (robot: RobotState) => void,
-      starPosition: Position,
+      starPositions: Position[],
+      collectedStars: Set<string>,
+      collectStar: (position: Position) => void,
       gridSize: number,
       obstacles: Position[]
     ): Promise<boolean> => {
@@ -109,6 +113,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
       }
 
       let currentRobot = { ...robot };
+      let currentCollectedStars = new Set(collectedStars);
 
       for (let i = 0; i < expandedCommands.length; i++) {
         const cmd = expandedCommands[i];
@@ -120,9 +125,23 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
         currentRobot = executeCommand(currentRobot, cmd, gridSize, obstacles);
         setRobot(currentRobot);
 
-        // Check win condition
-        if (checkWin({ x: currentRobot.x, y: currentRobot.y }, starPosition)) {
-          // Small delay to visualize robot at star before callback
+        // Check if robot is on any uncollected star
+        const robotPos = { x: currentRobot.x, y: currentRobot.y };
+        for (const starPos of starPositions) {
+          const starKey = `${starPos.x},${starPos.y}`;
+          if (
+            checkWin(robotPos, starPos) &&
+            !currentCollectedStars.has(starKey)
+          ) {
+            collectStar(starPos);
+            currentCollectedStars.add(starKey);
+            console.log('⭐ Star collected at:', starPos);
+          }
+        }
+
+        // Check win condition - all stars collected
+        if (currentCollectedStars.size === starPositions.length) {
+          // Small delay to visualize robot at last star before callback
           await new Promise(resolve => setTimeout(resolve, 200));
           setIsExecuting(false);
           onExecutionEnd?.();

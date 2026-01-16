@@ -41,6 +41,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
 
     const updatedLevel = { ...currentLevel };
     const walls = updatedLevel.obstacles || [];
+    const stars = updatedLevel.starPositions || [];
 
     const wallIndex = walls.findIndex(w => w.x === x && w.y === y);
     const isWall = wallIndex !== -1;
@@ -57,11 +58,20 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         alert('⚠️ A estrela não pode estar na mesma posição do robô!');
         return;
       }
-      updatedLevel.starPosition = { x, y };
+
+      // Check if star already exists at this position
+      const starIndex = stars.findIndex(s => s.x === x && s.y === y);
+      if (starIndex !== -1) {
+        // Remove star
+        updatedLevel.starPositions = stars.filter((_, i) => i !== starIndex);
+      } else {
+        // Add star
+        updatedLevel.starPositions = [...stars, { x, y }];
+      }
     } else if (editorMode === 'wall') {
       if (
         (updatedLevel.robotStart.x === x && updatedLevel.robotStart.y === y) ||
-        (updatedLevel.starPosition.x === x && updatedLevel.starPosition.y === y)
+        stars.some(s => s.x === x && s.y === y)
       ) {
         alert('⚠️ Não é possível colocar parede na posição do robô ou estrela!');
         return;
@@ -85,10 +95,16 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       return;
     }
 
-    if (
-      currentLevel.robotStart.x === currentLevel.starPosition.x &&
-      currentLevel.robotStart.y === currentLevel.starPosition.y
-    ) {
+    if (currentLevel.starPositions.length === 0) {
+      alert('⚠️ O nível precisa ter pelo menos uma estrela!');
+      return;
+    }
+
+    // Check if robot is on any star
+    const robotOnStar = currentLevel.starPositions.some(
+      s => s.x === currentLevel.robotStart.x && s.y === currentLevel.robotStart.y
+    );
+    if (robotOnStar) {
       alert('⚠️ O robô e a estrela não podem estar na mesma posição!');
       return;
     }
@@ -107,7 +123,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       id: newId,
       name: `Nível ${newId}`,
       robotStart: { x: 0, y: 0 },
-      starPosition: { x: 4, y: 4 },
+      starPositions: [{ x: 4, y: 4 }],
       gridSize: 5,
       obstacles: [],
     };
@@ -140,7 +156,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
         const isRobot = currentLevel.robotStart.x === x && currentLevel.robotStart.y === y;
-        const isStar = currentLevel.starPosition.x === x && currentLevel.starPosition.y === y;
+        const isStar = currentLevel.starPositions.some(s => s.x === x && s.y === y);
         const isWall = currentLevel.obstacles?.some(w => w.x === x && w.y === y);
 
         cells.push(
@@ -216,7 +232,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
                       ...currentLevel,
                       gridSize: val,
                       robotStart: { x: 0, y: 0 },
-                      starPosition: { x: val - 1, y: val - 1 },
+                      starPositions: [{ x: val - 1, y: val - 1 }],
                       obstacles: [],
                     });
                   }
@@ -230,7 +246,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
           <h3 className={styles.sectionTitle}>Editor Visual</h3>
 
           <div className={styles.info}>
-            💡 <strong>Dica:</strong> Selecione o modo e clique nas células da grade.
+            💡 <strong>Dica:</strong> Selecione o modo e clique nas células da grade. No modo Estrela, clique novamente para remover.
           </div>
 
           <div className={styles.gridEditor}>

@@ -17,7 +17,8 @@ interface UseGameReturn {
   currentLevelId: number;
   levelName: string;
   robot: RobotState;
-  starPosition: Position;
+  starPositions: Position[];
+  collectedStars: Set<string>;
   totalLevels: number;
   isFirstLevel: boolean;
   isLastLevel: boolean;
@@ -29,6 +30,7 @@ interface UseGameReturn {
   setCurrentLevelId: (id: number) => void;
   setRobot: React.Dispatch<React.SetStateAction<RobotState>>;
   resetLevel: () => void;
+  collectStar: (position: Position) => void;
 }
 
 export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
@@ -45,10 +47,10 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     y: initialLevel.robotStart.y,
     rotation: 90,
   });
-  const [starPosition, setStarPosition] = useState<Position>({
-    x: initialLevel.starPosition.x,
-    y: initialLevel.starPosition.y,
-  });
+  const [starPositions, setStarPositions] = useState<Position[]>(
+    initialLevel.starPositions || []
+  );
+  const [collectedStars, setCollectedStars] = useState<Set<string>>(new Set());
   const [levelName, setLevelName] = useState(initialLevel.name);
 
   // Get current level config
@@ -64,17 +66,15 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
       if (level) {
         console.log('🎮 Loading level:', level.name);
         console.log('🤖 Robot start:', level.robotStart);
-        console.log('⭐ Star position:', level.starPosition);
+        console.log('⭐ Star positions:', level.starPositions);
 
         setRobot({
           x: level.robotStart.x,
           y: level.robotStart.y,
           rotation: 90,
         });
-        setStarPosition({
-          x: level.starPosition.x,
-          y: level.starPosition.y,
-        });
+        setStarPositions(level.starPositions || []);
+        setCollectedStars(new Set());
         setLevelName(level.name);
 
         console.log('✅ Level loaded successfully');
@@ -116,13 +116,20 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     loadLevel(currentLevelId);
   }, [currentLevelId, loadLevel]);
 
+  // Collect a star at the given position
+  const collectStar = useCallback((position: Position) => {
+    const key = `${position.x},${position.y}`;
+    setCollectedStars(prev => new Set(prev).add(key));
+  }, []);
+
   return {
     // State
     currentLevel,
     currentLevelId,
     levelName,
     robot,
-    starPosition,
+    starPositions,
+    collectedStars,
     totalLevels: activeLevels.length,
     isFirstLevel: currentLevelId === 1,
     isLastLevel: currentLevelId === activeLevels.length,
@@ -134,6 +141,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     setCurrentLevelId,
     setRobot,
     resetLevel,
+    collectStar,
   };
 };
 

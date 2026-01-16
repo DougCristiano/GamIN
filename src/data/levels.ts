@@ -10,7 +10,7 @@ import type { LevelConfig } from '@/types';
  * - id: unique identifier
  * - name: display name
  * - robotStart: starting position of the robot
- * - starPosition: goal position (star)
+ * - starPositions: goal positions (stars) - can have multiple stars
  * - obstacles: (optional) wall positions
  * - gridSize: (optional) grid dimensions, defaults to 5
  */
@@ -19,21 +19,32 @@ export const LEVELS: LevelConfig[] = [
     id: 1,
     name: 'Nível 1 - Primeiro Passo',
     robotStart: { x: 0, y: 0 },
-    starPosition: { x: 4, y: 4 },
+    starPositions: [{ x: 4, y: 4 }],
     gridSize: 5,
   },
   {
     id: 2,
     name: 'Nível 2 - Desafio Intermediário',
     robotStart: { x: 0, y: 0 },
-    starPosition: { x: 3, y: 2 },
+    starPositions: [{ x: 3, y: 2 }],
     gridSize: 5,
   },
   {
     id: 3,
     name: 'Nível 3 - Desafio Avançado',
     robotStart: { x: 0, y: 0 },
-    starPosition: { x: 2, y: 4 },
+    starPositions: [{ x: 2, y: 4 }],
+    gridSize: 5,
+  },
+  {
+    id: 4,
+    name: 'Nível 4 - Múltiplas Estrelas',
+    robotStart: { x: 2, y: 2 },
+    starPositions: [
+      { x: 0, y: 0 },
+      { x: 4, y: 0 },
+      { x: 4, y: 4 },
+    ],
     gridSize: 5,
   },
 ];

@@ -28,7 +28,8 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     currentLevelId,
     levelName,
     robot,
-    starPosition,
+    starPositions,
+    collectedStars,
     totalLevels,
     isFirstLevel,
     isLastLevel,
@@ -37,6 +38,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     setCurrentLevelId,
     setRobot,
     resetLevel,
+    collectStar,
   } = useGame({ customLevels });
 
   // Command management
@@ -69,7 +71,15 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     const gridSize = currentLevel.gridSize || 5;
     const obstacles = currentLevel.obstacles || [];
 
-    await runCommands(robot, setRobot, starPosition, gridSize, obstacles);
+    await runCommands(
+      robot,
+      setRobot,
+      starPositions,
+      collectedStars,
+      collectStar,
+      gridSize,
+      obstacles
+    );
   };
 
   // Handle reset
@@ -155,17 +165,27 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
           >
             {renderGrid()}
 
-            {/* Star */}
-            <div
-              className={styles.star}
-              style={{
-                width: `${cellSize}px`,
-                height: `${cellSize}px`,
-                transform: `translate(${starPosition.x * cellSize}px, ${starPosition.y * cellSize}px)`,
-              }}
-            >
-              <FaStar />
-            </div>
+            {/* Stars */}
+            {starPositions.map((starPos) => {
+              const starKey = `${starPos.x},${starPos.y}`;
+              const isCollected = collectedStars.has(starKey);
+              return (
+                <div
+                  key={starKey}
+                  className={styles.star}
+                  style={{
+                    width: `${cellSize}px`,
+                    height: `${cellSize}px`,
+                    transform: `translate(${starPos.x * cellSize}px, ${starPos.y * cellSize}px)`,
+                    opacity: isCollected ? 0.3 : 1,
+                    filter: isCollected ? 'grayscale(100%)' : 'none',
+                  }}
+                  title={isCollected ? 'Estrela coletada' : 'Estrela'}
+                >
+                  <FaStar />
+                </div>
+              );
+            })}
 
             {/* Robot */}
             <div
