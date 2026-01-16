@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FaTimes, FaRobot, FaStar, FaSave, FaPlus, FaTrash, FaSquare, FaKey, FaDoorOpen } from 'react-icons/fa';
 import type { LevelConfig } from '@/types';
 import { LEVELS } from '@/data';
+import { KEY_COLORS, getKeyColor } from '@/utils/keyColors';
 import styles from './LevelEditor.module.css';
 
 interface LevelEditorProps {
@@ -30,6 +31,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
   const [selectedLevelId, setSelectedLevelId] = useState<number>(1);
   const [currentLevel, setCurrentLevel] = useState<LevelConfig | null>(null);
   const [editorMode, setEditorMode] = useState<EditorMode>('robot');
+  const [selectedColor, setSelectedColor] = useState<string>('red');
   const [levelName, setLevelName] = useState('');
 
   useEffect(() => {
@@ -91,8 +93,8 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         // Remove key
         updatedLevel.keys = keys.filter((_, i) => i !== keyIndex);
       } else {
-        // Add key with default color (can be changed later)
-        updatedLevel.keys = [...keys, { id: 'red', position: { x, y } }];
+        // Add key with selected color
+        updatedLevel.keys = [...keys, { id: selectedColor, position: { x, y } }];
       }
     } else if (editorMode === 'door') {
       // Check if door already exists at this position
@@ -101,8 +103,8 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         // Remove door
         updatedLevel.doors = doors.filter((_, i) => i !== doorIndex);
       } else {
-        // Add door with default color (can be changed later)
-        updatedLevel.doors = [...doors, { id: 'red', position: { x, y } }];
+        // Add door with selected color
+        updatedLevel.doors = [...doors, { id: selectedColor, position: { x, y } }];
       }
     } else if (editorMode === 'wall') {
       if (
@@ -217,8 +219,24 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
             {isRobot && <FaRobot />}
             {isStar && <FaStar />}
             {isWall && <FaSquare style={{ fontSize: '0.8em', opacity: 0.7 }} />}
-            {isKey && <FaKey />}
-            {isDoor && <FaDoorOpen />}
+            {isKey && (
+              <FaKey
+                style={{
+                  color: getKeyColor(
+                    currentLevel.keys?.find(k => k.position.x === x && k.position.y === y)?.id || 'red'
+                  ),
+                }}
+              />
+            )}
+            {isDoor && (
+              <FaDoorOpen
+                style={{
+                  color: getKeyColor(
+                    currentLevel.doors?.find(d => d.position.x === x && d.position.y === y)?.id || 'red'
+                  ),
+                }}
+              />
+            )}
           </div>
         );
       }
@@ -332,6 +350,31 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
                 <FaSquare /> Parede
               </button>
             </div>
+
+            {/* Color Selector - Only show when in key or door mode */}
+            {(editorMode === 'key' || editorMode === 'door') && (
+              <div className={styles.colorSelector}>
+                <label className={styles.colorLabel}>
+                  Escolha a cor da {editorMode === 'key' ? 'chave' : 'porta'}:
+                </label>
+                <div className={styles.colorOptions}>
+                  {Object.entries(KEY_COLORS).map(([colorId, colorHex]) => (
+                    <button
+                      key={colorId}
+                      className={`${styles.colorBtn} ${selectedColor === colorId ? styles.activeColor : ''}`}
+                      style={{
+                        backgroundColor: colorHex,
+                        border: selectedColor === colorId ? '3px solid white' : '2px solid rgba(255,255,255,0.3)',
+                      }}
+                      onClick={() => setSelectedColor(colorId)}
+                      title={colorId}
+                    >
+                      {selectedColor === colorId && '✓'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div
               className={styles.grid}
