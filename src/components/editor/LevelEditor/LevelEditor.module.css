@@ -253,7 +253,7 @@
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -261,18 +261,24 @@
   color: white;
   font-weight: bold;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  background-image: none;
+  background-image: none !important;
   /* Remove global gradient */
+  position: relative;
 }
 
 .colorBtn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  filter: brightness(1.1);
 }
 
 .colorBtn.activeColor {
-  transform: scale(1.15);
-  box-shadow: 0 0 20px currentColor;
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8), 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+
+.colorBtn.activeColor:hover {
+  transform: scale(1.25);
 }
 
 .grid {

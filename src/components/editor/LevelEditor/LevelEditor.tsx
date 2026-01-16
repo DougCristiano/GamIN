@@ -61,6 +61,16 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
     const keys = updatedLevel.keys || [];
     const doors = updatedLevel.doors || [];
 
+    // Helper function to check if cell is occupied by any element
+    const isCellOccupied = (checkX: number, checkY: number, excludeType?: string) => {
+      const hasRobot = excludeType !== 'robot' && updatedLevel.robotStart.x === checkX && updatedLevel.robotStart.y === checkY;
+      const hasStar = excludeType !== 'star' && stars.some(s => s.x === checkX && s.y === checkY);
+      const hasKey = excludeType !== 'key' && keys.some(k => k.position.x === checkX && k.position.y === checkY);
+      const hasDoor = excludeType !== 'door' && doors.some(d => d.position.x === checkX && d.position.y === checkY);
+      const hasWall = excludeType !== 'wall' && walls.some(w => w.x === checkX && w.y === checkY);
+      return hasRobot || hasStar || hasKey || hasDoor || hasWall;
+    };
+
     const wallIndex = walls.findIndex(w => w.x === x && w.y === y);
     const isWall = wallIndex !== -1;
 
@@ -70,6 +80,10 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
     }
 
     if (editorMode === 'robot') {
+      if (isCellOccupied(x, y, 'robot')) {
+        alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+        return;
+      }
       updatedLevel.robotStart = { x, y };
     } else if (editorMode === 'star') {
       if (updatedLevel.robotStart.x === x && updatedLevel.robotStart.y === y) {
@@ -83,6 +97,11 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         // Remove star
         updatedLevel.starPositions = stars.filter((_, i) => i !== starIndex);
       } else {
+        // Check if cell is occupied by other elements
+        if (isCellOccupied(x, y, 'star')) {
+          alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+          return;
+        }
         // Add star
         updatedLevel.starPositions = [...stars, { x, y }];
       }
@@ -93,6 +112,11 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         // Remove key
         updatedLevel.keys = keys.filter((_, i) => i !== keyIndex);
       } else {
+        // Check if cell is occupied by other elements
+        if (isCellOccupied(x, y, 'key')) {
+          alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+          return;
+        }
         // Add key with selected color
         updatedLevel.keys = [...keys, { id: selectedColor, position: { x, y } }];
       }
@@ -103,6 +127,11 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         // Remove door
         updatedLevel.doors = doors.filter((_, i) => i !== doorIndex);
       } else {
+        // Check if cell is occupied by other elements
+        if (isCellOccupied(x, y, 'door')) {
+          alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+          return;
+        }
         // Add door with selected color
         updatedLevel.doors = [...doors, { id: selectedColor, position: { x, y } }];
       }
@@ -118,6 +147,11 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       if (isWall) {
         updatedLevel.obstacles = walls.filter((_, i) => i !== wallIndex);
       } else {
+        // Check if cell is occupied by other elements
+        if (isCellOccupied(x, y, 'wall')) {
+          alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+          return;
+        }
         updatedLevel.obstacles = [...walls, { x, y }];
       }
     }
