@@ -7,14 +7,40 @@ function GamePage() {
 
   // Load custom levels from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('customLevels');
-    if (saved) {
-      try {
-        setCustomLevels(JSON.parse(saved));
-      } catch (e) {
-        console.error('Erro ao carregar níveis salvos:', e);
+    const loadLevels = () => {
+      const saved = localStorage.getItem('customLevels');
+      if (saved) {
+        try {
+          setCustomLevels(JSON.parse(saved));
+        } catch (e) {
+          console.error('Erro ao carregar níveis salvos:', e);
+        }
       }
-    }
+    };
+
+    // Carregar na montagem
+    loadLevels();
+
+    // Listener para mudanças no localStorage (sincroniza entre guias)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'customLevels') {
+        loadLevels();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Listener customizado para mudanças na mesma guia
+    const handleCustomEvent = () => {
+      loadLevels();
+    };
+
+    window.addEventListener('levelsUpdated', handleCustomEvent);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('levelsUpdated', handleCustomEvent);
+    };
   }, []);
 
   const handleLevelsUpdate = (levels: LevelConfig[]) => {

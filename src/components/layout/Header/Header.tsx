@@ -12,7 +12,8 @@ export const Header: React.FC<HeaderProps> = ({ hideEditorButton = false }) => {
   const navigate = useNavigate();
 
   const handleEditorClick = () => {
-    navigate('/editor');
+    // Abrir em nova guia
+    window.open('/editor', '_blank');
   };
 
   const handleHomeClick = () => {

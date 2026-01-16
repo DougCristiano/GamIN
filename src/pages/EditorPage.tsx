@@ -9,6 +9,9 @@ function EditorPage() {
   const handleLevelsUpdate = (levels: LevelConfig[]) => {
     // Save to localStorage to persist between pages
     localStorage.setItem('customLevels', JSON.stringify(levels));
+
+    // Disparar evento para notificar outras guias
+    window.dispatchEvent(new Event('levelsUpdated'));
   };
 
   const handleClose = () => {

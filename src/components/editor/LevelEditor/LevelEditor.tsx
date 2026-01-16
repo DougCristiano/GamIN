@@ -14,7 +14,19 @@ interface LevelEditorProps {
 type EditorMode = 'robot' | 'star' | 'wall' | 'key' | 'door';
 
 const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPage = false }) => {
-  const [levels, setLevels] = useState<LevelConfig[]>([...LEVELS]);
+  // Carregar níveis salvos do localStorage ou usar níveis padrão
+  const [levels, setLevels] = useState<LevelConfig[]>(() => {
+    const savedLevels = localStorage.getItem('customLevels');
+    if (savedLevels) {
+      try {
+        return JSON.parse(savedLevels);
+      } catch (e) {
+        console.error('Erro ao carregar níveis salvos:', e);
+        return [...LEVELS];
+      }
+    }
+    return [...LEVELS];
+  });
   const [selectedLevelId, setSelectedLevelId] = useState<number>(1);
   const [currentLevel, setCurrentLevel] = useState<LevelConfig | null>(null);
   const [editorMode, setEditorMode] = useState<EditorMode>('robot');
@@ -27,6 +39,8 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         setCurrentLevel({
           ...level,
           obstacles: level.obstacles || [],
+          keys: level.keys || [],
+          doors: level.doors || [],
           gridSize: level.gridSize || 5,
         });
         setLevelName(level.name);
@@ -166,6 +180,16 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       setLevels(updatedLevels);
       setSelectedLevelId(updatedLevels[0].id);
       onSave(updatedLevels);
+    }
+  };
+
+  const handleResetToDefaults = () => {
+    if (confirm('⚠️ Tem certeza que deseja resetar todos os níveis aos padrões? Todas as suas alterações serão perdidas!')) {
+      const defaultLevels = [...LEVELS];
+      setLevels(defaultLevels);
+      setSelectedLevelId(1);
+      onSave(defaultLevels);
+      alert('✅ Níveis resetados aos padrões!');
     }
   };
 
@@ -322,6 +346,9 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         </div>
 
         <div className={styles.actions}>
+          <button className={styles.resetBtn} onClick={handleResetToDefaults}>
+            🔄 Resetar aos Padrões
+          </button>
           {levels.length > 1 && (
             <button className={styles.deleteBtn} onClick={handleDeleteLevel}>
               <FaTrash /> Deletar Nível
