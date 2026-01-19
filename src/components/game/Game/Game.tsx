@@ -14,6 +14,8 @@ import {
   LevelNavigation,
   RecursionWarning,
   Timer,
+  LevelHistory,
+  type LevelStatus,
 } from '@/components';
 import robotImg from '@/assets/robot.png';
 import styles from './Game.module.css';
@@ -28,6 +30,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
   const [levelStarted, setLevelStarted] = useState(false);
   const [timerRunning, setTimerRunning] = useState(false);
   const [levelFailed, setLevelFailed] = useState(false);
+  const [levelStatuses, setLevelStatuses] = useState<Record<number, LevelStatus>>({});
 
   // Update board size on resize
   useEffect(() => {
@@ -77,6 +80,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
   } = useCommands({
     onWin: () => {
       setTimerRunning(false);
+      setLevelStatuses(prev => ({ ...prev, [currentLevelId]: 'success' }));
       if (currentLevelId < totalLevels) {
         alert(`✅ ${levelName} Completado! Indo para o próximo nível...`);
         setCurrentLevelId(currentLevelId + 1);
@@ -106,6 +110,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
   const handleTimeUp = () => {
     setTimerRunning(false);
     setLevelFailed(true);
+    setLevelStatuses(prev => ({ ...prev, [currentLevelId]: 'fail' }));
     alert(`⏰ Tempo esgotado! Você não completou ${levelName}.`);
     if (currentLevelId < totalLevels) {
       setTimeout(() => {
@@ -213,19 +218,35 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             functionLimits={currentLevel?.functionLimits}
             commandQueue={commandQueue}
           />
+
+          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* Timer - Show always if timeLimit exists */}
+            {currentLevel?.timeLimit && (
+              <Timer
+                timeLimit={currentLevel.timeLimit}
+                isRunning={timerRunning}
+                onTimeUp={handleTimeUp}
+              />
+            )}
+
+            {/* Start Level Button */}
+            {!levelStarted && (
+              <button className={styles.startLevelBtn} onClick={handleStartLevel}>
+                🚀 Começar Nível
+              </button>
+            )}
+
+            {/* Level History */}
+            <LevelHistory
+              totalLevels={totalLevels}
+              levelStatuses={levelStatuses}
+              currentLevelId={currentLevelId}
+            />
+          </div>
         </div>
 
         {/* Right Column - Board */}
         <div className={styles.boardPanel}>
-          {/* Timer - Show always if timeLimit exists */}
-          {currentLevel?.timeLimit && (
-            <Timer
-              timeLimit={currentLevel.timeLimit}
-              isRunning={timerRunning}
-              onTimeUp={handleTimeUp}
-            />
-          )}
-
           {/* Level Failed Message */}
           {levelFailed && (
             <div className={styles.failedMessage}>
@@ -322,14 +343,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
               <img src={robotImg} alt="Robot" className={styles.robotImage} />
             </div>
 
-            {/* Start Button Overlay */}
-            {!levelStarted && (
-              <div className={styles.startOverlay}>
-                <button className={styles.startButton} onClick={handleStartLevel}>
-                  🚀 Começar Nível
-                </button>
-              </div>
-            )}
+
           </div>
         </div>
       </div>

@@ -88,38 +88,28 @@
   user-select: none;
 }
 
-.startOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(15, 23, 42, 0.85);
-  z-index: 1000;
-  backdrop-filter: blur(2px);
-}
-
-.startButton {
-  padding: var(--spacing-4) var(--spacing-8);
-  font-size: var(--font-size-2xl);
+.startLevelBtn {
+  width: 100%;
+  padding: var(--spacing-4);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   background: var(--gradient-primary);
   color: #ffffff;
   border: none;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-lg);
   transition: all var(--transition-normal);
   animation: pulse 2s infinite;
-  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
 }
 
-.startButton:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+.startLevelBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
 }
 
 .failedMessage {
