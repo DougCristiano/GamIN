@@ -308,6 +308,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
           </div>
         </div>
 
+
         <div className={styles.editorSection}>
           <h3 className={styles.sectionTitle}>Configurações do Nível</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
@@ -340,6 +341,105 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
                   }
                 }}
               />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', marginTop: '1rem' }}>
+            <div className={styles.inputGroup}>
+              <label>Limite de Comandos na Fila</label>
+              <input
+                type="number"
+                min="1"
+                max="100"
+                value={currentLevel?.maxCommands || ''}
+                onChange={e => {
+                  const val = e.target.value === '' ? undefined : parseInt(e.target.value);
+                  if (currentLevel) {
+                    setCurrentLevel({
+                      ...currentLevel,
+                      maxCommands: val,
+                    });
+                  }
+                }}
+                placeholder="Ilimitado"
+              />
+              <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                Deixe vazio para ilimitado
+              </small>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '1rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              Funções Disponíveis (deixe vazio para desabilitar)
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              <div className={styles.inputGroup}>
+                <label>F0 - Limite</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  value={currentLevel?.functionLimits?.F0 || ''}
+                  onChange={e => {
+                    const val = e.target.value === '' ? undefined : parseInt(e.target.value);
+                    if (currentLevel) {
+                      setCurrentLevel({
+                        ...currentLevel,
+                        functionLimits: {
+                          ...currentLevel.functionLimits,
+                          F0: val,
+                        },
+                      });
+                    }
+                  }}
+                  placeholder="Desabilitada"
+                />
+              </div>
+              <div className={styles.inputGroup}>
+                <label>F1 - Limite</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  value={currentLevel?.functionLimits?.F1 || ''}
+                  onChange={e => {
+                    const val = e.target.value === '' ? undefined : parseInt(e.target.value);
+                    if (currentLevel) {
+                      setCurrentLevel({
+                        ...currentLevel,
+                        functionLimits: {
+                          ...currentLevel.functionLimits,
+                          F1: val,
+                        },
+                      });
+                    }
+                  }}
+                  placeholder="Desabilitada"
+                />
+              </div>
+              <div className={styles.inputGroup}>
+                <label>F2 - Limite</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  value={currentLevel?.functionLimits?.F2 || ''}
+                  onChange={e => {
+                    const val = e.target.value === '' ? undefined : parseInt(e.target.value);
+                    if (currentLevel) {
+                      setCurrentLevel({
+                        ...currentLevel,
+                        functionLimits: {
+                          ...currentLevel.functionLimits,
+                          F2: val,
+                        },
+                      });
+                    }
+                  }}
+                  placeholder="Desabilitada"
+                />
+              </div>
             </div>
           </div>
         </div>

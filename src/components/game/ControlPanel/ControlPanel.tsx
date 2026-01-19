@@ -4,7 +4,7 @@
  */
 
 import { FaArrowLeft, FaArrowUp, FaArrowRight, FaPlay, FaUndo } from 'react-icons/fa';
-import type { Command } from '@/types';
+import type { Command, FunctionLimits } from '@/types';
 import styles from './ControlPanel.module.css';
 
 interface ControlPanelProps {
@@ -13,6 +13,9 @@ interface ControlPanelProps {
   onReset: () => void;
   isExecuting: boolean;
   hasCommands: boolean;
+  commandCount: number;
+  maxCommands?: number;
+  functionLimits?: FunctionLimits;
 }
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -21,39 +24,57 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onReset,
   isExecuting,
   hasCommands,
+  commandCount,
+  maxCommands,
+  functionLimits,
 }) => {
+  const isLimitReached = maxCommands !== undefined && commandCount >= maxCommands;
+  const canAddCommand = !isExecuting && !isLimitReached;
+
   return (
     <div className={styles.controls}>
-      <button onClick={() => onAddCommand('LEFT')} disabled={isExecuting}>
+      {maxCommands !== undefined && (
+        <div className={styles.commandCounter}>
+          <strong>Comandos:</strong> {commandCount} / {maxCommands}
+          {isLimitReached && <span className={styles.limitWarning}> ⚠️ Limite atingido!</span>}
+        </div>
+      )}
+      <button onClick={() => onAddCommand('LEFT')} disabled={!canAddCommand}>
         <FaArrowLeft /> Girar Esq
       </button>
-      <button onClick={() => onAddCommand('MOVE')} disabled={isExecuting}>
+      <button onClick={() => onAddCommand('MOVE')} disabled={!canAddCommand}>
         <FaArrowUp /> Frente
       </button>
-      <button onClick={() => onAddCommand('RIGHT')} disabled={isExecuting}>
+      <button onClick={() => onAddCommand('RIGHT')} disabled={!canAddCommand}>
         Girar Dir <FaArrowRight />
       </button>
-      <button
-        onClick={() => onAddCommand('F0')}
-        className={styles.functionCallBtn}
-        disabled={isExecuting}
-      >
-        F0
-      </button>
-      <button
-        onClick={() => onAddCommand('F1')}
-        className={styles.functionCallBtn}
-        disabled={isExecuting}
-      >
-        F1
-      </button>
-      <button
-        onClick={() => onAddCommand('F2')}
-        className={styles.functionCallBtn}
-        disabled={isExecuting}
-      >
-        F2
-      </button>
+      {functionLimits?.F0 !== undefined && (
+        <button
+          onClick={() => onAddCommand('F0')}
+          className={styles.functionCallBtn}
+          disabled={!canAddCommand}
+        >
+          F0
+        </button>
+      )}
+      {functionLimits?.F1 !== undefined && (
+        <button
+          onClick={() => onAddCommand('F1')}
+          className={styles.functionCallBtn}
+          disabled={!canAddCommand}
+        >
+          F1
+        </button>
+      )}
+      {functionLimits?.F2 !== undefined && (
+        <button
+          onClick={() => onAddCommand('F2')}
+          className={styles.functionCallBtn}
+          disabled={!canAddCommand}
+        >
+          F2
+        </button>
+      )}
       <button onClick={onPlay} disabled={isExecuting || !hasCommands} className={styles.playBtn}>
         <FaPlay /> PLAY
       </button>

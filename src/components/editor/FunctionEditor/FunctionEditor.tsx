@@ -6,24 +6,41 @@ import {
   FaTrash,
   FaExclamationTriangle,
 } from 'react-icons/fa';
-import type { Command, FunctionDefinition } from '@/types';
+import type { Command, FunctionDefinition, FunctionLimits } from '@/types';
 import styles from './FunctionEditor.module.css';
 
 interface FunctionEditorProps {
   functions: FunctionDefinition[];
   onFunctionsChange: (functions: FunctionDefinition[]) => void;
+  functionLimits?: FunctionLimits;
 }
 
 type FunctionName = 'F0' | 'F1' | 'F2';
 
-export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFunctionsChange }) => {
+export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFunctionsChange, functionLimits }) => {
   const [activeFunction, setActiveFunction] = useState<FunctionName>('F0');
 
   const getCurrentFunction = (): FunctionDefinition => {
     return functions.find(f => f.name === activeFunction) || { name: activeFunction, commands: [] };
   };
 
+  const getFunctionLimit = (funcName: FunctionName): number | undefined => {
+    return functionLimits?.[funcName];
+  };
+
+  const isFunctionEnabled = (funcName: FunctionName): boolean => {
+    return functionLimits?.[funcName] !== undefined;
+  };
+
   const addCommandToFunction = (command: Command) => {
+    const currentFunc = getCurrentFunction();
+    const limit = getFunctionLimit(activeFunction);
+
+    // Check if limit is reached
+    if (limit !== undefined && currentFunc.commands.length >= limit) {
+      return; // Don't add if limit reached
+    }
+
     const updatedFunctions = functions.map(f => {
       if (f.name === activeFunction) {
         return { ...f, commands: [...f.commands, command] };
@@ -91,6 +108,24 @@ export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFun
 
   const currentFunc = getCurrentFunction();
   const hasRecursion = currentFunc.commands.includes(activeFunction as Command);
+  const currentLimit = getFunctionLimit(activeFunction);
+  const enabledFunctions = (['F0', 'F1', 'F2'] as const).filter(isFunctionEnabled);
+
+  // If no functions enabled, show message
+  if (enabledFunctions.length === 0) {
+    return (
+      <div className={styles.functionEditor}>
+        <div className={styles.functionInfo}>
+          ℹ️ Nenhuma função disponível neste nível.
+        </div>
+      </div>
+    );
+  }
+
+  // Auto-select first enabled function if current is disabled
+  if (!isFunctionEnabled(activeFunction) && enabledFunctions.length > 0) {
+    setActiveFunction(enabledFunctions[0]);
+  }
 
   return (
     <div className={styles.functionEditor}>
@@ -101,7 +136,7 @@ export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFun
 
       {/* Function Tabs */}
       <div className={styles.functionTabs}>
-        {(['F0', 'F1', 'F2'] as const).map(funcName => {
+        {enabledFunctions.map(funcName => {
           const func = functions.find(f => f.name === funcName);
           const count = func?.commands.length || 0;
           const isSaved = count > 0;
@@ -148,6 +183,16 @@ export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFun
       <div className={styles.functionContent}>
         <div className={styles.functionTitle}>Definição de {activeFunction}:</div>
 
+        {/* Function Command Counter */}
+        {currentLimit !== undefined && (
+          <div className={styles.functionCounter}>
+            <strong>Comandos na função:</strong> {currentFunc.commands.length} / {currentLimit}
+            {currentFunc.commands.length >= currentLimit && (
+              <span className={styles.limitWarning}> ⚠️ Limite atingido!</span>
+            )}
+          </div>
+        )}
+
         {/* Function Commands */}
         <div
           className={`${styles.functionCommands} ${currentFunc.commands.length === 0 ? styles.empty : ''}`}
@@ -176,22 +221,22 @@ export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFun
 
         {/* Add Command Buttons */}
         <div className={styles.functionButtons}>
-          <button onClick={() => addCommandToFunction('LEFT')} className={styles.functionBtn}>
+          <button onClick={() => addCommandToFunction('LEFT')} className={styles.functionBtn} disabled={currentLimit !== undefined && currentFunc.commands.length >= currentLimit}>
             <FaArrowLeft /> Esquerda
           </button>
-          <button onClick={() => addCommandToFunction('MOVE')} className={styles.functionBtn}>
+          <button onClick={() => addCommandToFunction('MOVE')} className={styles.functionBtn} disabled={currentLimit !== undefined && currentFunc.commands.length >= currentLimit}>
             <FaArrowUp /> Frente
           </button>
-          <button onClick={() => addCommandToFunction('RIGHT')} className={styles.functionBtn}>
+          <button onClick={() => addCommandToFunction('RIGHT')} className={styles.functionBtn} disabled={currentLimit !== undefined && currentFunc.commands.length >= currentLimit}>
             <FaArrowRight /> Direita
           </button>
-          <button onClick={() => addCommandToFunction('F0')} className={styles.functionBtn}>
+          <button onClick={() => addCommandToFunction('F0')} className={styles.functionBtn} disabled={currentLimit !== undefined && currentFunc.commands.length >= currentLimit || !isFunctionEnabled('F0')}>
             F0
           </button>
-          <button onClick={() => addCommandToFunction('F1')} className={styles.functionBtn}>
+          <button onClick={() => addCommandToFunction('F1')} className={styles.functionBtn} disabled={currentLimit !== undefined && currentFunc.commands.length >= currentLimit || !isFunctionEnabled('F1')}>
             F1
           </button>
-          <button onClick={() => addCommandToFunction('F2')} className={styles.functionBtn}>
+          <button onClick={() => addCommandToFunction('F2')} className={styles.functionBtn} disabled={currentLimit !== undefined && currentFunc.commands.length >= currentLimit || !isFunctionEnabled('F2')}>
             F2
           </button>
           <button

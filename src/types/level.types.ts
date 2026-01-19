@@ -16,6 +16,16 @@ export interface DoorItem {
   position: Position;
 }
 
+/** Function limits configuration */
+export interface FunctionLimits {
+  /** Maximum commands for F0 (undefined = disabled) */
+  F0?: number;
+  /** Maximum commands for F1 (undefined = disabled) */
+  F1?: number;
+  /** Maximum commands for F2 (undefined = disabled) */
+  F2?: number;
+}
+
 /** Configuration for a game level */
 export interface LevelConfig {
   /** Unique identifier for the level */
@@ -34,6 +44,10 @@ export interface LevelConfig {
   doors?: DoorItem[];
   /** Grid size (e.g., 5 for 5x5) */
   gridSize?: number;
+  /** Maximum number of commands in the main queue (undefined = unlimited) */
+  maxCommands?: number;
+  /** Function limits (undefined function = disabled, number = max commands) */
+  functionLimits?: FunctionLimits;
 }
 
 /** Level editor state */

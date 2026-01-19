@@ -142,6 +142,13 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
       <div className={styles.gameLayout}>
         {/* Left Column - Instructions */}
         <div className={styles.instructionsPanel}>
+          {/* Function Editor */}
+          <FunctionEditor
+            functions={functions}
+            onFunctionsChange={setFunctions}
+            functionLimits={currentLevel?.functionLimits}
+          />
+
           {/* Command Queue */}
           <CommandQueue commands={commandQueue} />
 
@@ -157,10 +164,10 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             onReset={handleReset}
             isExecuting={isExecuting}
             hasCommands={commandQueue.length > 0}
+            commandCount={commandQueue.length}
+            maxCommands={currentLevel?.maxCommands}
+            functionLimits={currentLevel?.functionLimits}
           />
-
-          {/* Function Editor */}
-          <FunctionEditor functions={functions} onFunctionsChange={setFunctions} />
         </div>
 
         {/* Right Column - Board */}

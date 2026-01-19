@@ -21,6 +21,8 @@ export const LEVELS: LevelConfig[] = [
     robotStart: { x: 0, y: 0 },
     starPositions: [{ x: 4, y: 4 }],
     gridSize: 5,
+    maxCommands: 10,
+    functionLimits: { F0: 5 },
   },
   {
     id: 2,
@@ -28,6 +30,8 @@ export const LEVELS: LevelConfig[] = [
     robotStart: { x: 0, y: 0 },
     starPositions: [{ x: 3, y: 2 }],
     gridSize: 5,
+    maxCommands: 8,
+    functionLimits: { F0: 4, F1: 3 },
   },
   {
     id: 3,
@@ -35,6 +39,8 @@ export const LEVELS: LevelConfig[] = [
     robotStart: { x: 0, y: 0 },
     starPositions: [{ x: 2, y: 4 }],
     gridSize: 5,
+    maxCommands: 10,
+    functionLimits: { F0: 5, F1: 4 },
   },
   {
     id: 4,
@@ -46,6 +52,8 @@ export const LEVELS: LevelConfig[] = [
       { x: 4, y: 4 },
     ],
     gridSize: 5,
+    maxCommands: 12,
+    functionLimits: { F0: 6, F1: 5, F2: 4 },
   },
   {
     id: 5,
@@ -61,6 +69,8 @@ export const LEVELS: LevelConfig[] = [
       { x: 2, y: 4 },
     ],
     gridSize: 5,
+    maxCommands: 15,
+    functionLimits: { F0: 7, F1: 6 },
   },
   {
     id: 6,
@@ -82,6 +92,8 @@ export const LEVELS: LevelConfig[] = [
       { x: 2, y: 3 },
     ],
     gridSize: 5,
+    maxCommands: 20,
+    functionLimits: { F0: 8, F1: 7, F2: 6 },
   },
 ];
 

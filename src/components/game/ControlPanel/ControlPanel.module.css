@@ -9,6 +9,37 @@
   box-shadow: var(--shadow-lg);
 }
 
+.commandCounter {
+  width: 100%;
+  padding: var(--spacing-3);
+  background: rgba(37, 99, 235, 0.1);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.limitWarning {
+  color: #fbbf24;
+  font-weight: var(--font-weight-bold);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+
 .controls button {
   display: flex;
   align-items: center;

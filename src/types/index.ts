@@ -1,13 +1,6 @@
 /**
- * Types - Barrel export for all type definitions
+ * Types - Central export point for all type definitions
  */
 
-export type {
-  Direction,
-  Command,
-  RobotState,
-  Position,
-  FunctionDefinition,
-  ExecutionState,
-} from './game.types';
-export type { LevelConfig, LevelEditorState, KeyItem, DoorItem } from './level.types';
+export type { Position, Direction, RobotState, Command, FunctionDefinition } from './game.types';
+export type { LevelConfig, KeyItem, DoorItem, LevelEditorState, FunctionLimits } from './level.types';
