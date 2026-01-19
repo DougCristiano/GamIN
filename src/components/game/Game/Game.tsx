@@ -13,6 +13,7 @@ import {
   ControlPanel,
   LevelNavigation,
   RecursionWarning,
+  Timer,
 } from '@/components';
 import robotImg from '@/assets/robot.png';
 import styles from './Game.module.css';
@@ -24,6 +25,9 @@ interface GameProps {
 export const Game: React.FC<GameProps> = ({ customLevels }) => {
   const boardRef = useRef<HTMLDivElement>(null);
   const [boardSize, setBoardSize] = useState(600);
+  const [levelStarted, setLevelStarted] = useState(false);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [levelFailed, setLevelFailed] = useState(false);
 
   // Update board size on resize
   useEffect(() => {
@@ -72,6 +76,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     runCommands,
   } = useCommands({
     onWin: () => {
+      setTimerRunning(false);
       if (currentLevelId < totalLevels) {
         alert(`✅ ${levelName} Completado! Indo para o próximo nível...`);
         setCurrentLevelId(currentLevelId + 1);
@@ -81,6 +86,33 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
       }
     },
   });
+
+  // Reset level started state when level changes (moved after hooks)
+  useEffect(() => {
+    setLevelStarted(false);
+    setTimerRunning(false);
+    setLevelFailed(false);
+  }, [currentLevelId]);
+
+  // Handle level start
+  const handleStartLevel = () => {
+    setLevelStarted(true);
+    if (currentLevel?.timeLimit) {
+      setTimerRunning(true);
+    }
+  };
+
+  // Handle time up
+  const handleTimeUp = () => {
+    setTimerRunning(false);
+    setLevelFailed(true);
+    alert(`⏰ Tempo esgotado! Você não completou ${levelName}.`);
+    if (currentLevelId < totalLevels) {
+      setTimeout(() => {
+        setCurrentLevelId(currentLevelId + 1);
+      }, 1000);
+    }
+  };
 
   // Handle play button
   const handlePlay = async () => {
@@ -185,9 +217,25 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
 
         {/* Right Column - Board */}
         <div className={styles.boardPanel}>
+          {/* Timer - Show always if timeLimit exists */}
+          {currentLevel?.timeLimit && (
+            <Timer
+              timeLimit={currentLevel.timeLimit}
+              isRunning={timerRunning}
+              onTimeUp={handleTimeUp}
+            />
+          )}
+
+          {/* Level Failed Message */}
+          {levelFailed && (
+            <div className={styles.failedMessage}>
+              ⏰ Tempo esgotado! Próximo nível em breve...
+            </div>
+          )}
+
           <div
             ref={boardRef}
-            className={styles.board}
+            className={`${styles.board} ${!levelStarted ? styles.blurred : ''}`}
             style={{
               gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
               gridTemplateRows: `repeat(${gridSize}, 1fr)`,
@@ -273,6 +321,15 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             >
               <img src={robotImg} alt="Robot" className={styles.robotImage} />
             </div>
+
+            {/* Start Button Overlay */}
+            {!levelStarted && (
+              <div className={styles.startOverlay}>
+                <button className={styles.startButton} onClick={handleStartLevel}>
+                  🚀 Começar Nível
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

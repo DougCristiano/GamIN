@@ -48,6 +48,8 @@ export interface LevelConfig {
   maxCommands?: number;
   /** Function limits (undefined function = disabled, number = max commands) */
   functionLimits?: FunctionLimits;
+  /** Time limit in seconds (undefined = no time limit) */
+  timeLimit?: number;
 }
 
 /** Level editor state */

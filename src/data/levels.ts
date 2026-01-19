@@ -23,6 +23,7 @@ export const LEVELS: LevelConfig[] = [
     gridSize: 5,
     maxCommands: 10,
     functionLimits: { F0: 5 },
+    timeLimit: 60,
   },
   {
     id: 2,
@@ -32,6 +33,7 @@ export const LEVELS: LevelConfig[] = [
     gridSize: 5,
     maxCommands: 8,
     functionLimits: { F0: 4, F1: 3 },
+    timeLimit: 45,
   },
   {
     id: 3,

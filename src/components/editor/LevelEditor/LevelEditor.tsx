@@ -344,7 +344,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', marginTop: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
             <div className={styles.inputGroup}>
               <label>Limite de Comandos na Fila</label>
               <input
@@ -365,6 +365,29 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
               />
               <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
                 Deixe vazio para ilimitado
+              </small>
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label>Tempo Limite (segundos)</label>
+              <input
+                type="number"
+                min="10"
+                max="600"
+                value={currentLevel?.timeLimit || ''}
+                onChange={e => {
+                  const val = e.target.value === '' ? undefined : parseInt(e.target.value);
+                  if (currentLevel) {
+                    setCurrentLevel({
+                      ...currentLevel,
+                      timeLimit: val,
+                    });
+                  }
+                }}
+                placeholder="Sem limite"
+              />
+              <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                Deixe vazio para sem limite de tempo
               </small>
             </div>
           </div>

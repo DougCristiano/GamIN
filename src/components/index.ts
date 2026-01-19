@@ -9,4 +9,4 @@ export { FunctionEditor, LevelEditor } from './editor';
 export { Header } from './layout';
 
 // Game components
-export { CommandQueue, ControlPanel, Game, LevelNavigation, RecursionWarning } from './game';
+export { CommandQueue, ControlPanel, Game, LevelNavigation, RecursionWarning, Timer } from './game';

@@ -82,6 +82,74 @@
   border-color: #1f2937;
 }
 
+.board.blurred {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.startOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.85);
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.startButton {
+  padding: var(--spacing-4) var(--spacing-8);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  background: var(--gradient-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  box-shadow: var(--shadow-xl);
+  transition: all var(--transition-normal);
+  animation: pulse 2s infinite;
+  z-index: 1001;
+}
+
+.startButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+}
+
+.failedMessage {
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border: 2px solid var(--color-error);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+  margin-bottom: var(--spacing-3);
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-10px);
+  }
+
+  75% {
+    transform: translateX(10px);
+  }
+}
+
 
 /* ========================================
    ROBOT
