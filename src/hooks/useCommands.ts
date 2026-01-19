@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { Command, FunctionDefinition, RobotState, Position, KeyItem, DoorItem } from '@/types';
+import type { Command, FunctionDefinition, RobotState, Position, KeyItem, DoorItem, ColoredCell, CellColor } from '@/types';
 import { expandCommands, executeCommand, checkWin } from '@/services';
 import { MAX_EXECUTION_STEPS, EXECUTION_DELAY } from '@/utils/constants';
 
@@ -37,7 +37,9 @@ interface UseCommandsReturn {
     gridSize: number,
     obstacles: Position[],
     keys: KeyItem[],
-    doors: DoorItem[]
+    doors: DoorItem[],
+    coloredCells?: ColoredCell[],
+    paintCell?: (position: Position, color: CellColor) => void
   ) => Promise<boolean>;
   reset: () => void;
 }
@@ -95,7 +97,9 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
       gridSize: number,
       obstacles: Position[],
       keys: KeyItem[] = [],
-      doors: DoorItem[] = []
+      doors: DoorItem[] = [],
+      coloredCells: ColoredCell[] = [],
+      paintCell?: (position: Position, color: CellColor) => void
     ): Promise<boolean> => {
       setIsExecuting(true);
       setRecursionWarning(null);
@@ -123,9 +127,54 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
       let currentRobot = { ...robot };
       let currentCollectedStars = new Set(collectedStars);
       let currentCollectedKeys = new Set(collectedKeys);
+      // Clone colored cells to track local changes during execution
+      let currentColoredCells = [...coloredCells];
 
       for (let i = 0; i < expandedCommands.length; i++) {
         const cmd = expandedCommands[i];
+
+        // Handles PAINT commands
+        if (cmd.startsWith('PAINT_')) {
+          const color = cmd.replace('PAINT_', '') as CellColor;
+          paintCell?.({ x: currentRobot.x, y: currentRobot.y }, color);
+
+          // Update local state for subsequent checks
+          const existingCellIndex = currentColoredCells.findIndex(
+            c => c.position.x === currentRobot.x && c.position.y === currentRobot.y
+          );
+
+          if (existingCellIndex >= 0) {
+            // Update existing cell locally
+            const updatedCells = [...currentColoredCells];
+            updatedCells[existingCellIndex] = { ...updatedCells[existingCellIndex], color };
+            currentColoredCells = updatedCells;
+          } else {
+            // Add new cell locally
+            currentColoredCells = [...currentColoredCells, { position: { x: currentRobot.x, y: currentRobot.y }, color }];
+          }
+
+          await new Promise(resolve => setTimeout(resolve, EXECUTION_DELAY / 2));
+          continue;
+        }
+
+        // Handles IF commands (Conditional Logic)
+        if (cmd.startsWith('IF_')) {
+          const requiredColor = cmd.replace('IF_', '') as CellColor;
+          const currentCell = currentColoredCells.find(
+            c => c.position.x === currentRobot.x && c.position.y === currentRobot.y
+          );
+
+          const isConditionMet = currentCell?.color === requiredColor;
+
+          if (!isConditionMet) {
+            console.log(`Condition ${cmd} failed (Current: ${currentCell?.color || 'None'}) - Skipping next command`);
+            // Skip the NEXT command
+            i++;
+          } else {
+            console.log(`Condition ${cmd} met - Executing next command`);
+          }
+          continue;
+        }
 
         // Delay between commands for animation
         await new Promise(resolve => setTimeout(resolve, EXECUTION_DELAY));

@@ -54,6 +54,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     starPositions,
     collectedStars,
     collectedKeys,
+    coloredCells,
     totalLevels,
     isFirstLevel,
     isLastLevel,
@@ -64,6 +65,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     resetLevel,
     collectStar,
     collectKey,
+    paintCell,
   } = useGame({ customLevels });
 
   // Command management
@@ -96,7 +98,8 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     setLevelStarted(false);
     setTimerRunning(false);
     setLevelFailed(false);
-  }, [currentLevelId]);
+    clearQueue();
+  }, [currentLevelId, clearQueue]);
 
   // Handle level start
   const handleStartLevel = () => {
@@ -139,7 +142,9 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
       gridSize,
       obstacles,
       keys,
-      doors
+      doors,
+      coloredCells,
+      paintCell
     );
   };
 
@@ -160,10 +165,20 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     for (let y = 0; y < gridSize; y++) {
       for (let x = 0; x < gridSize; x++) {
         const isWall = obstacles.some(w => w.x === x && w.y === y);
+
+        // Determine cell color class
+        const coloredCell = coloredCells.find(c => c.position.x === x && c.position.y === y);
+        let colorClass = '';
+        if (coloredCell && !isWall) {
+          if (coloredCell.color === 'RED') colorClass = styles.cellRed;
+          else if (coloredCell.color === 'GREEN') colorClass = styles.cellGreen;
+          else if (coloredCell.color === 'BLUE') colorClass = styles.cellBlue;
+        }
+
         cells.push(
           <div
             key={`${x}-${y}`}
-            className={`${styles.cell} ${isWall ? styles.wall : ''}`}
+            className={`${styles.cell} ${isWall ? styles.wall : ''} ${colorClass}`}
             title={isWall ? 'Parede' : `Posição (${x}, ${y})`}
           >
             {isWall && <FaSquare style={{ color: '#4b5563', fontSize: '1.5em', opacity: 0.5 }} />}

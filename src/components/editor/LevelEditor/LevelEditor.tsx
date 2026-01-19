@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { FaTimes, FaRobot, FaStar, FaSave, FaPlus, FaTrash, FaSquare, FaKey, FaDoorOpen } from 'react-icons/fa';
-import type { LevelConfig } from '@/types';
+import type { LevelConfig, CellColor } from '@/types';
 import { LEVELS } from '@/data';
 import { KEY_COLORS, getKeyColor } from '@/utils/keyColors';
 import styles from './LevelEditor.module.css';
+import { FaPaintBrush } from 'react-icons/fa';
 
 interface LevelEditorProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface LevelEditorProps {
   asPage?: boolean;
 }
 
-type EditorMode = 'robot' | 'star' | 'wall' | 'key' | 'door';
+type EditorMode = 'robot' | 'star' | 'wall' | 'key' | 'door' | 'paint';
 
 const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPage = false }) => {
   // Carregar níveis salvos do localStorage ou usar níveis padrão
@@ -32,7 +33,14 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
   const [currentLevel, setCurrentLevel] = useState<LevelConfig | null>(null);
   const [editorMode, setEditorMode] = useState<EditorMode>('robot');
   const [selectedColor, setSelectedColor] = useState<string>('red');
+  const [selectedCellColor, setSelectedCellColor] = useState<CellColor>('RED');
   const [levelName, setLevelName] = useState('');
+
+  const CELL_COLORS: Record<CellColor, string> = {
+    RED: '#ef4444',
+    GREEN: '#22c55e',
+    BLUE: '#3b82f6',
+  };
 
   useEffect(() => {
     if (selectedLevelId) {
@@ -43,6 +51,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
           obstacles: level.obstacles || [],
           keys: level.keys || [],
           doors: level.doors || [],
+          coloredCells: level.coloredCells || [],
           gridSize: level.gridSize || 5,
         });
         setLevelName(level.name);
@@ -154,6 +163,23 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         }
         updatedLevel.obstacles = [...walls, { x, y }];
       }
+    } else if (editorMode === 'paint') {
+      if (isWall) {
+        alert('⚠️ Não é possível pintar uma parede!');
+        return;
+      }
+
+      const coloredCells = updatedLevel.coloredCells || [];
+      const cellIndex = coloredCells.findIndex(c => c.position.x === x && c.position.y === y);
+
+      if (cellIndex !== -1 && coloredCells[cellIndex].color === selectedCellColor) {
+        // Remove color if clicking again with same color
+        updatedLevel.coloredCells = coloredCells.filter((_, i) => i !== cellIndex);
+      } else {
+        // Add or update color
+        const otherCells = coloredCells.filter((_, i) => i !== cellIndex);
+        updatedLevel.coloredCells = [...otherCells, { position: { x, y }, color: selectedCellColor }];
+      }
     }
 
     setCurrentLevel(updatedLevel);
@@ -242,6 +268,8 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         const isWall = currentLevel.obstacles?.some(w => w.x === x && w.y === y);
         const isKey = currentLevel.keys?.some(k => k.position.x === x && k.position.y === y);
         const isDoor = currentLevel.doors?.some(d => d.position.x === x && d.position.y === y);
+        const coloredCell = currentLevel.coloredCells?.find(c => c.position.x === x && c.position.y === y);
+        const backgroundColor = coloredCell ? CELL_COLORS[coloredCell.color] + '66' : undefined;
 
         cells.push(
           <div
@@ -249,6 +277,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
             className={`${styles.gridCell} ${isRobot ? styles.robot : ''} ${isStar ? styles.star : ''} ${isWall ? styles.wall : ''} ${isKey ? styles.key : ''} ${isDoor ? styles.door : ''}`}
             onClick={() => handleCellClick(x, y)}
             title={`Posição (${x}, ${y})`}
+            style={{ backgroundColor }}
           >
             {isRobot && <FaRobot />}
             {isStar && <FaStar />}
@@ -506,6 +535,12 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
               >
                 <FaSquare /> Parede
               </button>
+              <button
+                className={`${styles.modeBtn} ${editorMode === 'paint' ? styles.active : ''}`}
+                onClick={() => setEditorMode('paint')}
+              >
+                <FaPaintBrush /> Pintar
+              </button>
             </div>
 
             {/* Color Selector - Only show when in key or door mode */}
@@ -527,6 +562,31 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
                       title={colorId}
                     >
                       {selectedColor === colorId && '✓'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Cell Color Selector - Only show when in paint mode */}
+            {editorMode === 'paint' && (
+              <div className={styles.colorSelector}>
+                <label className={styles.colorLabel}>
+                  Escolha a cor da célula:
+                </label>
+                <div className={styles.colorOptions}>
+                  {Object.entries(CELL_COLORS).map(([colorName, colorHex]) => (
+                    <button
+                      key={colorName}
+                      className={`${styles.colorBtn} ${selectedCellColor === colorName ? styles.activeColor : ''}`}
+                      style={{
+                        backgroundColor: colorHex,
+                        border: selectedCellColor === colorName ? '3px solid white' : '2px solid rgba(255,255,255,0.3)',
+                      }}
+                      onClick={() => setSelectedCellColor(colorName as CellColor)}
+                      title={colorName}
+                    >
+                      {selectedCellColor === colorName && '✓'}
                     </button>
                   ))}
                 </div>

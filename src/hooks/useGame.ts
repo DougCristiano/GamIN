@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { LevelConfig, RobotState, Position } from '@/types';
+import type { LevelConfig, RobotState, Position, ColoredCell, CellColor } from '@/types';
 import { LEVELS as DEFAULT_LEVELS } from '@/data';
 
 interface UseGameOptions {
@@ -20,6 +20,7 @@ interface UseGameReturn {
   starPositions: Position[];
   collectedStars: Set<string>;
   collectedKeys: Set<string>;
+  coloredCells: ColoredCell[];
   totalLevels: number;
   isFirstLevel: boolean;
   isLastLevel: boolean;
@@ -33,6 +34,7 @@ interface UseGameReturn {
   resetLevel: () => void;
   collectStar: (position: Position) => void;
   collectKey: (keyId: string) => void;
+  paintCell: (position: Position, color: CellColor) => void;
 }
 
 export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
@@ -54,6 +56,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
   );
   const [collectedStars, setCollectedStars] = useState<Set<string>>(new Set());
   const [collectedKeys, setCollectedKeys] = useState<Set<string>>(new Set());
+  const [coloredCells, setColoredCells] = useState<ColoredCell[]>(initialLevel.coloredCells || []);
   const [levelName, setLevelName] = useState(initialLevel.name);
 
   // Get current level config
@@ -83,6 +86,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
         setStarPositions(starPositions);
         setCollectedStars(new Set());
         setCollectedKeys(new Set());
+        setColoredCells(level.coloredCells || []);
         setLevelName(level.name);
 
         console.log('✅ Level loaded successfully');
@@ -135,6 +139,16 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     setCollectedKeys(prev => new Set(prev).add(keyId));
   }, []);
 
+  // Paint a cell
+  const paintCell = useCallback((position: Position, color: CellColor) => {
+    setColoredCells(prev => {
+      // Remove existing color at this position if any
+      const filtered = prev.filter(cell => cell.position.x !== position.x || cell.position.y !== position.y);
+      // Add new color
+      return [...filtered, { position, color }];
+    });
+  }, []);
+
   return {
     // State
     currentLevel,
@@ -144,6 +158,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     starPositions,
     collectedStars,
     collectedKeys,
+    coloredCells,
     totalLevels: activeLevels.length,
     isFirstLevel: currentLevelId === 1,
     isLastLevel: currentLevelId === activeLevels.length,
@@ -157,6 +172,7 @@ export const useGame = (options: UseGameOptions = {}): UseGameReturn => {
     resetLevel,
     collectStar,
     collectKey,
+    paintCell,
   };
 };
 

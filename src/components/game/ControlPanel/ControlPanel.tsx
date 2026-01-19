@@ -79,6 +79,20 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             F2
           </button>
         )}
+
+        {/* Color Commands */}
+        <div className={styles.colorControls}>
+          <div className={styles.buttonGroup}>
+            <button onClick={() => onAddCommand('PAINT_RED')} disabled={!canAddCommand} className={styles.btnRed} title="Pintar Vermelho">🟥 Pintar</button>
+            <button onClick={() => onAddCommand('PAINT_GREEN')} disabled={!canAddCommand} className={styles.btnGreen} title="Pintar Verde">🟩 Pintar</button>
+            <button onClick={() => onAddCommand('PAINT_BLUE')} disabled={!canAddCommand} className={styles.btnBlue} title="Pintar Azul">🟦 Pintar</button>
+          </div>
+          <div className={styles.buttonGroup}>
+            <button onClick={() => onAddCommand('IF_RED')} disabled={!canAddCommand} className={styles.btnIfRed} title="Se estiver no Vermelho">Se 🟥</button>
+            <button onClick={() => onAddCommand('IF_GREEN')} disabled={!canAddCommand} className={styles.btnIfGreen} title="Se estiver no Verde">Se 🟩</button>
+            <button onClick={() => onAddCommand('IF_BLUE')} disabled={!canAddCommand} className={styles.btnIfBlue} title="Se estiver no Azul">Se 🟦</button>
+          </div>
+        </div>
         <button onClick={onPlay} disabled={isExecuting || !hasCommands} className={styles.playBtn}>
           <FaPlay /> PLAY
         </button>

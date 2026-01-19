@@ -2,7 +2,7 @@
  * Level Types - Type definitions for level configuration
  */
 
-import type { Position } from './game.types';
+import type { Position, ColoredCell } from './game.types';
 
 /** Key with unique ID and color */
 export interface KeyItem {
@@ -42,6 +42,8 @@ export interface LevelConfig {
   keys?: KeyItem[];
   /** Optional door items with unique IDs */
   doors?: DoorItem[];
+  /** Optional initial colored cells */
+  coloredCells?: ColoredCell[];
   /** Grid size (e.g., 5 for 5x5) */
   gridSize?: number;
   /** Maximum number of commands in the main queue (undefined = unlimited) */
