@@ -39,7 +39,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       <div className={styles.controls}>
         {maxCommands !== undefined && (
           <div className={styles.commandCounter}>
-            <strong>Comandos:</strong> {commandCount} / {maxCommands}
+            <strong>Comandos Máximos nesse nível:</strong> {commandCount} / {maxCommands}
             {isLimitReached && <span className={styles.limitWarning}> ⚠️ Limite atingido!</span>}
           </div>
         )}

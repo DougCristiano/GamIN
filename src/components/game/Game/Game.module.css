@@ -27,6 +27,8 @@
   gap: var(--spacing-4);
   width: 100%;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* Right Column - Board */

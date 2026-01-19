@@ -2,15 +2,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  padding: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
   background: #1e293b;
   border: 1px solid #334155;
   border-radius: var(--radius-lg);
-  min-height: 100px;
-  max-height: 180px;
-  overflow-y: auto;
   box-shadow: var(--shadow-md);
   font-family: 'Courier New', monospace;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .queueDisplay::before {
@@ -19,9 +20,6 @@
   color: #60a5fa;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  margin-bottom: var(--spacing-2);
-  padding-bottom: var(--spacing-2);
-  border-bottom: 1px solid #334155;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -45,41 +43,32 @@
 
 .commandList {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: var(--spacing-2);
   margin-left: 0;
+  overflow-x: auto;
+  padding: var(--spacing-2) 0;
 }
 
 .commandItem {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  width: auto;
+  justify-content: center;
+  min-width: auto;
   height: auto;
-  background: transparent;
-  border-radius: 0;
+  background: #0f172a;
+  border-radius: var(--radius-sm);
   color: #22c55e;
   box-shadow: none;
   font-family: 'Courier New', monospace;
-  padding: var(--spacing-1) 0;
+  padding: var(--spacing-1) var(--spacing-2);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .commandItem::before {
-  content: '$ ';
-  color: #60a5fa;
-  margin-right: var(--spacing-2);
-}
-
-@keyframes terminalBlink {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.5;
-  }
+  display: none;
 }
 
 .functionBadge {
@@ -95,19 +84,20 @@
 }
 
 /* Scrollbar styling */
-.queueDisplay::-webkit-scrollbar {
-  width: 6px;
+.commandList::-webkit-scrollbar {
+  height: 4px;
 }
 
-.queueDisplay::-webkit-scrollbar-track {
+.commandList::-webkit-scrollbar-track {
   background: #0f172a;
+  border-radius: 2px;
 }
 
-.queueDisplay::-webkit-scrollbar-thumb {
+.commandList::-webkit-scrollbar-thumb {
   background: #475569;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
-.queueDisplay::-webkit-scrollbar-thumb:hover {
+.commandList::-webkit-scrollbar-thumb:hover {
   background: #64748b;
 }
