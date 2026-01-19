@@ -10,7 +10,6 @@ import { getKeyColor } from '@/utils/keyColors';
 import { useGame, useCommands } from '@/hooks';
 import {
   FunctionEditor,
-  CommandQueue,
   ControlPanel,
   LevelNavigation,
   RecursionWarning,
@@ -149,15 +148,12 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             functionLimits={currentLevel?.functionLimits}
           />
 
-          {/* Command Queue */}
-          <CommandQueue commands={commandQueue} />
-
           {/* Recursion Warning */}
           {recursionWarning && (
             <RecursionWarning message={recursionWarning} onClose={clearWarning} />
           )}
 
-          {/* Control Panel */}
+          {/* Control Panel with Command Queue */}
           <ControlPanel
             onAddCommand={addCommand}
             onPlay={handlePlay}
@@ -167,6 +163,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             commandCount={commandQueue.length}
             maxCommands={currentLevel?.maxCommands}
             functionLimits={currentLevel?.functionLimits}
+            commandQueue={commandQueue}
           />
         </div>
 

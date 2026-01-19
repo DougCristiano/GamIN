@@ -3,33 +3,13 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-4) var(--spacing-8);
-  background: linear-gradient(180deg,
-      rgba(0, 0, 0, 0.95) 0%,
-      rgba(10, 10, 15, 0.9) 100%);
-  backdrop-filter: blur(20px);
+  background: var(--color-bg-primary);
   color: var(--color-text-primary);
-  box-shadow:
-    0 4px 30px rgba(0, 0, 0, 0.5),
-    inset 0 -1px 0 rgba(59, 130, 246, 0.3);
+  box-shadow: var(--shadow-md);
   position: sticky;
   top: 0;
   z-index: var(--z-dropdown);
-  border-bottom: 1px solid var(--color-primary-700);
-}
-
-/* Subtle glow effect */
-.header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg,
-      transparent 0%,
-      var(--color-primary-500) 50%,
-      transparent 100%);
-  opacity: 0.5;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .logoContainer {
@@ -48,7 +28,6 @@
   font-weight: var(--font-weight-bold);
   letter-spacing: -0.03em;
   color: var(--color-text-primary);
-  text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
 }
 
 .logoAccent {
@@ -61,44 +40,13 @@
 
 .nav {
   display: flex;
-  gap: var(--spacing-8);
+  gap: var(--spacing-4);
   align-items: center;
-}
-
-.navLink {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-sm);
-  transition: all var(--transition-fast);
-  position: relative;
-  padding: var(--spacing-2) 0;
-}
-
-/* Animated underline on hover */
-.navLink::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--gradient-primary);
-  transition: width var(--transition-normal);
-}
-
-.navLink:hover {
-  color: var(--color-text-primary);
-  text-decoration: none;
-}
-
-.navLink:hover::after {
-  width: 100%;
 }
 
 .editorBtn {
   background: var(--gradient-primary);
-  color: var(--color-text-primary);
+  color: #ffffff;
   border: none;
   padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--radius-md);
@@ -109,17 +57,13 @@
   align-items: center;
   gap: var(--spacing-2);
   transition: all var(--transition-normal);
-  box-shadow:
-    0 4px 15px rgba(37, 99, 235, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .editorBtn:hover {
   background: var(--gradient-primary-hover);
   transform: translateY(-2px);
-  box-shadow:
-    0 8px 25px rgba(37, 99, 235, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .editorBtn:active {

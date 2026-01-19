@@ -12,7 +12,6 @@ export const Header: React.FC<HeaderProps> = ({ hideEditorButton = false }) => {
   const navigate = useNavigate();
 
   const handleEditorClick = () => {
-    // Abrir em nova guia
     window.open('/editor', '_blank');
   };
 
@@ -28,22 +27,6 @@ export const Header: React.FC<HeaderProps> = ({ hideEditorButton = false }) => {
         </span>
       </div>
       <nav className={styles.nav}>
-        <a
-          href="#"
-          className={styles.navLink}
-          onClick={e => {
-            e.preventDefault();
-            handleHomeClick();
-          }}
-        >
-          Início
-        </a>
-        <a href="#" className={styles.navLink}>
-          Sobre Nós
-        </a>
-        <a href="#" className={styles.navLink}>
-          Projetos
-        </a>
         {!hideEditorButton && (
           <button className={styles.editorBtn} onClick={handleEditorClick}>
             <FaEdit /> Editor de Níveis

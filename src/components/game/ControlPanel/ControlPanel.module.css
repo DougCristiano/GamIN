@@ -1,19 +1,25 @@
+.controlsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
 .controls {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-3);
   padding: var(--spacing-4);
-  background: var(--gradient-card);
+  background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .commandCounter {
   width: 100%;
   padding: var(--spacing-3);
-  background: rgba(37, 99, 235, 0.1);
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-primary-200);
   border-radius: var(--radius-md);
   text-align: center;
   font-size: var(--font-size-sm);
@@ -22,9 +28,8 @@
 }
 
 .limitWarning {
-  color: #fbbf24;
+  color: var(--color-warning);
   font-weight: var(--font-weight-bold);
-  animation: blink 1s infinite;
 }
 
 @keyframes blink {
@@ -52,17 +57,13 @@
   font-size: var(--font-size-sm);
   transition: all var(--transition-normal);
   background: var(--gradient-primary);
-  color: var(--color-text-primary);
-  box-shadow:
-    0 4px 15px rgba(37, 99, 235, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
 }
 
 .controls button:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow:
-    0 8px 25px rgba(37, 99, 235, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .controls button:active:not(:disabled) {
@@ -73,7 +74,8 @@
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
-  background: var(--color-bg-elevated);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
   box-shadow: none;
 }
 
