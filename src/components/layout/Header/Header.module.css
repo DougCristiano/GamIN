@@ -73,13 +73,38 @@
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
-    gap: var(--spacing-4);
-    padding: var(--spacing-4);
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .logoText {
+    font-size: var(--font-size-xl);
   }
 
   .nav {
-    gap: var(--spacing-4);
+    gap: var(--spacing-3);
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .editorBtn {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 575px) {
+  .header {
+    padding: var(--spacing-2) var(--spacing-3);
+    gap: var(--spacing-2);
+  }
+
+  .logoText {
+    font-size: var(--font-size-lg);
+  }
+
+  .editorBtn {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: 0.7rem;
   }
 }

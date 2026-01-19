@@ -3,9 +3,9 @@
  * Main game component using custom hooks and extracted components
  */
 
+import { useRef, useState, useEffect } from 'react';
 import { FaStar, FaSquare, FaKey, FaDoorOpen } from 'react-icons/fa';
 import type { LevelConfig } from '@/types';
-import { BOARD_SIZE } from '@/utils/constants';
 import { getKeyColor } from '@/utils/keyColors';
 import { useGame, useCommands } from '@/hooks';
 import {
@@ -22,6 +22,22 @@ interface GameProps {
 }
 
 export const Game: React.FC<GameProps> = ({ customLevels }) => {
+  const boardRef = useRef<HTMLDivElement>(null);
+  const [boardSize, setBoardSize] = useState(600);
+
+  // Update board size on resize
+  useEffect(() => {
+    const updateBoardSize = () => {
+      if (boardRef.current) {
+        setBoardSize(boardRef.current.offsetWidth);
+      }
+    };
+
+    updateBoardSize();
+    window.addEventListener('resize', updateBoardSize);
+    return () => window.removeEventListener('resize', updateBoardSize);
+  }, []);
+
   // Game state management
   const {
     currentLevel,
@@ -122,7 +138,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
   };
 
   const gridSize = currentLevel?.gridSize || 5;
-  const cellSize = BOARD_SIZE / gridSize;
+  const cellSize = boardSize / gridSize;
 
   return (
     <div className={styles.container}>
@@ -170,6 +186,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
         {/* Right Column - Board */}
         <div className={styles.boardPanel}>
           <div
+            ref={boardRef}
             className={styles.board}
             style={{
               gridTemplateColumns: `repeat(${gridSize}, 1fr)`,

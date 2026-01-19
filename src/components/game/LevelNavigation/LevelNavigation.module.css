@@ -57,3 +57,46 @@
   opacity: 0.5;
   box-shadow: none;
 }
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 767px) {
+  .levelHeader {
+    gap: var(--spacing-4);
+    padding: var(--spacing-3) 0;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .levelInfo h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .levelCounter {
+    font-size: var(--font-size-xs);
+  }
+
+  .navBtn {
+    width: 40px;
+    height: 40px;
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 575px) {
+  .levelHeader {
+    gap: var(--spacing-3);
+    padding: var(--spacing-2) 0;
+    margin-bottom: var(--spacing-2);
+  }
+
+  .levelInfo h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .navBtn {
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-size-sm);
+  }
+}

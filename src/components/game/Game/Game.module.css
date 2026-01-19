@@ -199,9 +199,52 @@
 }
 
 /* ========================================
-   RESPONSIVE
+   RESPONSIVE - 4K (2560px+)
    ======================================== */
-@media (max-width: 1200px) {
+@media (min-width: 2560px) {
+  .container {
+    max-width: 2200px;
+    padding: var(--spacing-8) var(--spacing-12);
+  }
+
+  .board {
+    width: 700px;
+    height: 700px;
+  }
+
+  .gameLayout {
+    gap: var(--spacing-12);
+  }
+}
+
+/* ========================================
+   RESPONSIVE - Large Desktop (1440px - 2559px)
+   ======================================== */
+@media (min-width: 1440px) and (max-width: 2559px) {
+  .container {
+    max-width: 1800px;
+  }
+
+  .board {
+    width: 650px;
+    height: 650px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - Desktop (1200px - 1439px)
+   ======================================== */
+@media (max-width: 1439px) {
+  .board {
+    width: 550px;
+    height: 550px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - Tablet Landscape (992px - 1199px)
+   ======================================== */
+@media (max-width: 1199px) {
   .gameLayout {
     flex-direction: column-reverse;
   }
@@ -211,11 +254,37 @@
     height: 500px;
     margin: 0 auto;
   }
+
+  .instructionsPanel {
+    max-width: 600px;
+    margin: 0 auto;
+  }
 }
 
-@media (max-width: 640px) {
+/* ========================================
+   RESPONSIVE - Tablet Portrait (768px - 991px)
+   ======================================== */
+@media (max-width: 991px) {
   .container {
-    padding: var(--spacing-4);
+    padding: var(--spacing-4) var(--spacing-6);
+  }
+
+  .board {
+    width: 450px;
+    height: 450px;
+  }
+
+  .instructionsPanel {
+    max-width: 100%;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - Mobile Landscape (576px - 767px)
+   ======================================== */
+@media (max-width: 767px) {
+  .container {
+    padding: var(--spacing-3) var(--spacing-4);
   }
 
   .board {
@@ -223,5 +292,36 @@
     height: auto;
     aspect-ratio: 1;
     max-width: 400px;
+  }
+
+  .gameLayout {
+    gap: var(--spacing-4);
+  }
+}
+
+/* ========================================
+   RESPONSIVE - Mobile Portrait (up to 575px)
+   ======================================== */
+@media (max-width: 575px) {
+  .container {
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+
+  .board {
+    max-width: 100%;
+    border-width: 2px;
+  }
+
+  .gameLayout {
+    gap: var(--spacing-3);
+  }
+}
+
+/* ========================================
+   RESPONSIVE - Small Mobile (up to 375px)
+   ======================================== */
+@media (max-width: 375px) {
+  .container {
+    padding: var(--spacing-2);
   }
 }
