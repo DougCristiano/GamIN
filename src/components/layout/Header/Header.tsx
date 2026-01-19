@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaSync } from 'react-icons/fa';
 import type { LevelConfig } from '@/types';
 import styles from './Header.module.css';
 
@@ -19,6 +19,13 @@ export const Header: React.FC<HeaderProps> = ({ hideEditorButton = false }) => {
     navigate('/');
   };
 
+  const handleResetLevels = () => {
+    if (confirm('Deseja carregar as novas missões oficiais? Quaisquer níveis criados localmente serão perdidos.')) {
+      localStorage.removeItem('customLevels');
+      window.location.reload();
+    }
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.logoContainer} onClick={handleHomeClick} style={{ cursor: 'pointer' }}>
@@ -27,6 +34,9 @@ export const Header: React.FC<HeaderProps> = ({ hideEditorButton = false }) => {
         </span>
       </div>
       <nav className={styles.nav}>
+        <button className={styles.editorBtn} onClick={handleResetLevels} style={{ marginRight: '1rem', background: 'var(--color-secondary-500)' }}>
+          <FaSync /> Novas Missões
+        </button>
         {!hideEditorButton && (
           <button className={styles.editorBtn} onClick={handleEditorClick}>
             <FaEdit /> Editor de Níveis
