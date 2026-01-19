@@ -232,6 +232,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             maxCommands={currentLevel?.maxCommands}
             functionLimits={currentLevel?.functionLimits}
             commandQueue={commandQueue}
+            disabled={!levelStarted}
           />
 
           <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>

@@ -18,6 +18,7 @@ interface ControlPanelProps {
   maxCommands?: number;
   functionLimits?: FunctionLimits;
   commandQueue: Command[];
+  disabled?: boolean;
 }
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -30,9 +31,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   maxCommands,
   functionLimits,
   commandQueue,
+  disabled = false,
 }) => {
   const isLimitReached = maxCommands !== undefined && commandCount >= maxCommands;
-  const canAddCommand = !isExecuting && !isLimitReached;
+  const canAddCommand = !disabled && !isExecuting && !isLimitReached;
 
   return (
     <div className={styles.controlsContainer}>
@@ -93,10 +95,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             <button onClick={() => onAddCommand('IF_BLUE')} disabled={!canAddCommand} className={styles.btnIfBlue} title="Se estiver no Azul">Se 🟦</button>
           </div>
         </div>
-        <button onClick={onPlay} disabled={isExecuting || !hasCommands} className={styles.playBtn}>
+        <button onClick={onPlay} disabled={disabled || isExecuting || !hasCommands} className={styles.playBtn}>
           <FaPlay /> PLAY
         </button>
-        <button onClick={onReset} className={styles.resetBtn}>
+        <button onClick={onReset} className={styles.resetBtn} disabled={disabled}>
           <FaUndo /> Reset
         </button>
       </div>
