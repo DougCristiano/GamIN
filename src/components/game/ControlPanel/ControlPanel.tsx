@@ -3,7 +3,7 @@
  * Game control buttons (movement, functions, play, reset)
  */
 
-import { FaArrowLeft, FaArrowUp, FaArrowRight, FaPlay, FaUndo } from 'react-icons/fa';
+import { FaArrowUp, FaPlay, FaUndo, FaRedo, FaPaintBrush } from 'react-icons/fa';
 import type { Command, FunctionLimits } from '@/types';
 import styles from './ControlPanel.module.css';
 
@@ -37,64 +37,59 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           </div>
         )}
 
-        {/* Movement Commands */}
-        <div className={styles.commandGroup}>
-          <button onClick={() => onAddCommand('LEFT')} disabled={!canAddCommand}>
-            <FaArrowLeft /> Girar Esq
-          </button>
-          <button onClick={() => onAddCommand('MOVE')} disabled={!canAddCommand}>
-            <FaArrowUp /> Frente
-          </button>
-          <button onClick={() => onAddCommand('RIGHT')} disabled={!canAddCommand}>
-            Girar Dir <FaArrowRight />
-          </button>
-        </div>
-
-        {/* Function Calls */}
-        {(functionLimits?.F0 !== undefined || functionLimits?.F1 !== undefined || functionLimits?.F2 !== undefined) && (
-          <div className={styles.commandGroup}>
-            {functionLimits?.F0 !== undefined && (
-              <button
-                onClick={() => onAddCommand('F0')}
-                className={styles.functionCallBtn}
-                disabled={!canAddCommand}
-              >
-                F0
+        <div className={styles.gamepadLayout}>
+          {/* Left Side - Movement (D-Pad style) */}
+          <div className={styles.gamepadLeft}>
+            <div className={styles.dpadContainer}>
+              {/* Arrange as D-Pad visually if possible via CSS grid later */}
+              <button onClick={() => onAddCommand('LEFT')} disabled={!canAddCommand} className={styles.dpadBtn}>
+                <FaUndo />
               </button>
-            )}
-            {functionLimits?.F1 !== undefined && (
-              <button
-                onClick={() => onAddCommand('F1')}
-                className={styles.functionCallBtn}
-                disabled={!canAddCommand}
-              >
-                F1
+              <button onClick={() => onAddCommand('MOVE')} disabled={!canAddCommand} className={styles.dpadBtn}>
+                <FaArrowUp />
               </button>
-            )}
-            {functionLimits?.F2 !== undefined && (
-              <button
-                onClick={() => onAddCommand('F2')}
-                className={styles.functionCallBtn}
-                disabled={!canAddCommand}
-              >
-                F2
+              <button onClick={() => onAddCommand('RIGHT')} disabled={!canAddCommand} className={styles.dpadBtn}>
+                <FaRedo />
               </button>
-            )}
+            </div>
+            <div className={styles.dpadLabel}>MOVIMENTO</div>
           </div>
-        )}
 
-        {/* Paint Commands */}
-        <div className={styles.commandGroup}>
-          <button onClick={() => onAddCommand('PAINT_RED')} disabled={!canAddCommand} className={styles.btnRed} title="Pintar Vermelho">🟥 Pintar</button>
-          <button onClick={() => onAddCommand('PAINT_GREEN')} disabled={!canAddCommand} className={styles.btnGreen} title="Pintar Verde">🟩 Pintar</button>
-          <button onClick={() => onAddCommand('PAINT_BLUE')} disabled={!canAddCommand} className={styles.btnBlue} title="Pintar Azul">🟦 Pintar</button>
-        </div>
+          {/* Right Side - Actions (Functions, Paints, Checks) */}
+          <div className={styles.gamepadRight}>
+            {(functionLimits?.F0 !== undefined || functionLimits?.F1 !== undefined || functionLimits?.F2 !== undefined) && (
+              <div className={styles.actionGroup}>
+                {functionLimits?.F0 !== undefined && (
+                  <button onClick={() => onAddCommand('F0')} className={styles.functionCallBtn} disabled={!canAddCommand}>F0</button>
+                )}
+                {functionLimits?.F1 !== undefined && (
+                  <button onClick={() => onAddCommand('F1')} className={styles.functionCallBtn} disabled={!canAddCommand}>F1</button>
+                )}
+                {functionLimits?.F2 !== undefined && (
+                  <button onClick={() => onAddCommand('F2')} className={styles.functionCallBtn} disabled={!canAddCommand}>F2</button>
+                )}
+              </div>
+            )}
 
-        {/* Conditional Commands */}
-        <div className={styles.commandGroup}>
-          <button onClick={() => onAddCommand('IF_RED')} disabled={!canAddCommand} className={styles.btnIfRed} title="Se estiver no Vermelho">Se 🟥</button>
-          <button onClick={() => onAddCommand('IF_GREEN')} disabled={!canAddCommand} className={styles.btnIfGreen} title="Se estiver no Verde">Se 🟩</button>
-          <button onClick={() => onAddCommand('IF_BLUE')} disabled={!canAddCommand} className={styles.btnIfBlue} title="Se estiver no Azul">Se 🟦</button>
+            <div className={styles.actionGroup}>
+              <button onClick={() => onAddCommand('PAINT_RED')} disabled={!canAddCommand} className={styles.btnRed} title="Pintar Vermelho">
+                <FaPaintBrush />
+              </button>
+              <button onClick={() => onAddCommand('PAINT_GREEN')} disabled={!canAddCommand} className={styles.btnGreen} title="Pintar Verde">
+                <FaPaintBrush />
+              </button>
+              <button onClick={() => onAddCommand('PAINT_BLUE')} disabled={!canAddCommand} className={styles.btnBlue} title="Pintar Azul">
+                <FaPaintBrush />
+              </button>
+            </div>
+
+            <div className={styles.actionGroup}>
+              <button onClick={() => onAddCommand('IF_RED')} disabled={!canAddCommand} className={styles.btnIfRed} title="Se Vermelho">Se</button>
+              <button onClick={() => onAddCommand('IF_GREEN')} disabled={!canAddCommand} className={styles.btnIfGreen} title="Se Verde">Se</button>
+              <button onClick={() => onAddCommand('IF_BLUE')} disabled={!canAddCommand} className={styles.btnIfBlue} title="Se Azul">Se</button>
+            </div>
+            <div className={styles.actionLabel}>AÇÕES</div>
+          </div>
         </div>
       </div>
     </div>

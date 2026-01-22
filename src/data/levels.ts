@@ -6,113 +6,94 @@ import type { LevelConfig } from '@/types';
 
 /**
  * Default game levels
- * Each level defines:
- * - id: unique identifier
- * - name: display name
- * - robotStart: starting position of the robot
- * - starPositions: goal positions (stars) - can have multiple stars
- * - obstacles: (optional) wall positions
- * - gridSize: (optional) grid dimensions, defaults to 5
+ * Tutorial sequence:
+ * 1. Basic Movement
+ * 2. Conditionals (If/Else)
+ * 3. Painting Mechanics
+ * 4. Functions
+ * 5. Recursion
  */
 export const LEVELS: LevelConfig[] = [
   {
     id: 1,
-    name: '1. O Início - Movimento e Funções',
-    robotStart: { x: 1, y: 1 },
-    starPositions: [{ x: 3, y: 3 }],
-    gridSize: 5,
+    name: '1. Primeiros Passos',
+    robotStart: { x: 1, y: 2 },
+    starPositions: [{ x: 4, y: 2 }],
+    gridSize: 6,
     maxCommands: 10,
-    functionLimits: { F0: 5 },
-    timeLimit: 60,
+    functionLimits: {}, // Functions disabled
     obstacles: [
-      { x: 2, y: 2 },
-    ]
+      { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 3, y: 1 }, { x: 4, y: 1 },
+      { x: 1, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 3 },
+    ],
+    // Goal: Learn to Move Forward.
   },
   {
     id: 2,
-    name: '2. Linha de Montagem - Recursão',
-    robotStart: { x: 0, y: 2 },
+    name: '2. Decisões Estratégicas',
+    robotStart: { x: 1, y: 2 },
     starPositions: [{ x: 4, y: 2 }],
     gridSize: 5,
-    maxCommands: 5,
-    functionLimits: { F0: 5 },
-    obstacles: [],
-    // Dica: Use recursão para chegar lá com poucos comandos
+    maxCommands: 15,
+    functionLimits: {}, // Functions disabled to focus on conditionals
+    coloredCells: [
+      { position: { x: 2, y: 2 }, color: 'GREEN' }
+    ],
+    obstacles: [
+      { x: 3, y: 2 } // Obstacle requiring a turn
+    ],
+    // Goal: Use "If Green" to turn and navigate around the wall.
   },
   {
     id: 3,
-    name: '3. Segurança Máxima - Chaves',
-    robotStart: { x: 0, y: 0 },
-    starPositions: [{ x: 4, y: 4 }],
-    keys: [{ id: 'blue', position: { x: 4, y: 0 } }],
-    doors: [{ id: 'blue', position: { x: 2, y: 2 } }],
-    obstacles: [
-      { x: 2, y: 0 }, { x: 2, y: 1 }, { x: 2, y: 3 }, { x: 2, y: 4 }, // Parede vertical com porta no meio
-      { x: 0, y: 2 }, { x: 1, y: 2 }, // Bloqueio horizontal parcial
-    ],
+    name: '3. O Pintor',
+    robotStart: { x: 2, y: 2 },
+    starPositions: [{ x: 0, y: 0 }, { x: 4, y: 4 }], // Reduced to 2 corners to keep it focused
     gridSize: 5,
-    maxCommands: 20,
-    functionLimits: { F0: 8, F1: 8 },
+    maxCommands: 30, // Ample moves
+    functionLimits: {}, // Functions disabled
+    // Goal: Practice movement and interact with the painting tool (sandbox style).
+    // Hint might suggest: "Pinte células para marcar onde já passou (opcional)."
   },
   {
     id: 4,
-    name: '4. Piloto Automático - Condicionais',
-    robotStart: { x: 0, y: 0 }, // Começa virado para Norte (padrão) -> precisa virar East
-    starPositions: [{ x: 1, y: 1 }], // Perto do fim do loop
+    name: '4. Padrões Repetitivos',
+    robotStart: { x: 1, y: 4 },
+    starPositions: [{ x: 4, y: 1 }],
     gridSize: 6,
-    coloredCells: [
-      { position: { x: 5, y: 0 }, color: 'RED' }, // Canto Superior Direito
-      { position: { x: 5, y: 5 }, color: 'RED' }, // Canto Inferior Direito
-      { position: { x: 0, y: 5 }, color: 'RED' }, // Canto Inferior Esquerdo
-      { position: { x: 0, y: 0 }, color: 'GREEN' }, // Início (opcional, só pra decorar)
-    ],
-    obstacles: [
-      { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 3, y: 1 }, { x: 4, y: 1 },
-      { x: 1, y: 2 }, { x: 4, y: 2 },
-      { x: 1, y: 3 }, { x: 4, y: 3 },
-      { x: 1, y: 4 }, { x: 2, y: 4 }, { x: 3, y: 4 }, { x: 4, y: 4 },
-    ], // Ilha central para forçar a volta externa
     maxCommands: 10,
-    functionLimits: { F0: 20, F1: 10 },
-    // Objetivo: Dar a volta. Se Vermelho -> Vire a Direita. F0: IF_RED RIGHT, MOVE, F0
+    functionLimits: { F0: 10 }, // F0 enabled for the first time
+    obstacles: [
+      { x: 1, y: 3 }, { x: 2, y: 3 },
+      { x: 2, y: 2 }, { x: 3, y: 2 },
+      { x: 3, y: 1 }, { x: 4, y: 2 }
+    ],
+    // Goal: Define a pattern in F0 and call it multiple times.
   },
   {
     id: 5,
-    name: '5. O Pintor - Memória de Estado',
-    robotStart: { x: 2, y: 2 },
-    // Vamos fazer um nível onde ele precisa ir e voltar.
-    // Ou melhor: Pintar os cantos de uma sala.
-    // Mas ele precisa coletar estrelas.
-    // Vamos colocar 4 estrelas nos cantos.
-    gridSize: 5,
-    starPositions: [
-      { x: 0, y: 0 }, { x: 4, y: 0 },
-      { x: 0, y: 4 }, { x: 4, y: 4 }
+    name: '5. Loop Infinito',
+    robotStart: { x: 1, y: 1 },
+    starPositions: [{ x: 5, y: 1 }],
+    gridSize: 7,
+    maxCommands: 3,
+    functionLimits: { F0: 5 }, // Needs recursion
+    obstacles: [
+      { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 5, y: 0 },
+      { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 5, y: 2 },
     ],
-    obstacles: [],
-    maxCommands: 15,
-    functionLimits: { F0: 20, F1: 10 },
-    // Dica: Use pintura para marcar onde já foi ou mudar comportamento
+    // Goal: Main: F0. F0: Move, F0.
   }
 ];
 
-/**
- * Get a level by its ID
- */
 export const getLevel = (levelId: number): LevelConfig | undefined => {
   return LEVELS.find(level => level.id === levelId);
 };
 
-/**
- * Get total number of levels
- */
 export const getTotalLevels = (): number => {
   return LEVELS.length;
 };
 
-/**
- * Validate if a star position is valid (not on robot start)
- */
 export const isValidStarPosition = (
   starPos: { x: number; y: number },
   robotPos: { x: number; y: number }

@@ -110,52 +110,67 @@
 .controls button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-4);
-  border-radius: 0;
-  border: 3px solid #000000;
+  border-radius: 6px;
+  border: none;
   cursor: pointer;
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
-  transition: all 0.1s ease;
-  background: linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 100%);
-  color: #ffffff;
+  transition: all 0.05s ease;
+  background: #333333;
+  /* Dark grey plastic */
+  color: #e0e0e0;
   box-shadow:
-    3px 3px 0px #000000,
-    inset 1px 1px 0px rgba(255, 255, 255, 0.3),
-    inset -1px -1px 0px rgba(0, 0, 0, 0.5);
+    0 6px 0 #111111,
+    /* Deep dark side */
+    0 8px 6px rgba(0, 0, 0, 0.6),
+    /* Drop shadow */
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    /* Top highlight */
+    inset 0 -2px 2px rgba(0, 0, 0, 0.3);
+  /* Bottom shade */
   font-family: 'Courier New', monospace;
   text-transform: uppercase;
   letter-spacing: 1px;
   min-width: 80px;
+  position: relative;
+  text-shadow: 1px 1px 0 #000000;
 }
 
 .controls button:hover:not(:disabled) {
-  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 100%);
-  transform: translate(-1px, -1px);
+  background: #444444;
+  transform: translateY(-1px);
   box-shadow:
-    4px 4px 0px #000000,
-    inset 1px 1px 0px rgba(255, 255, 255, 0.4),
-    inset -1px -1px 0px rgba(0, 0, 0, 0.5);
+    0 7px 0 #111111,
+    0 9px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.3);
 }
 
 .controls button:active:not(:disabled) {
-  transform: translate(2px, 2px);
+  transform: translateY(6px);
   box-shadow:
-    1px 1px 0px #000000,
-    inset 1px 1px 0px rgba(0, 0, 0, 0.5),
-    inset -1px -1px 0px rgba(255, 255, 255, 0.2);
+    0 0 0 #111111,
+    inset 0 2px 3px rgba(0, 0, 0, 0.6);
+  background: #2a2a2a;
 }
 
 .controls button:disabled {
-  background: linear-gradient(180deg, #333333 0%, #1a1a1a 100%);
-  color: #666666;
+  background: #2a2a2a;
+  color: #555555;
+  box-shadow:
+    0 2px 0 #111111,
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  transform: translateY(4px);
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.8;
 }
 
 .controls button svg {
   font-size: var(--font-size-lg);
+  filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.5));
 }
 
 /* Function buttons (F0, F1, F2) - Retro Purple */
@@ -315,30 +330,232 @@
 
 .btnRed,
 .btnIfRed {
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
-  border: 1px solid rgba(239, 68, 68, 0.2) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: #d32f2f !important;
+  border: none !important;
+  box-shadow:
+    0 6px 0 #8b0000,
+    0 8px 6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.controls button.btnRed:hover:not(:disabled),
+.controls button.btnIfRed:hover:not(:disabled) {
+  background: #e53935 !important;
+  box-shadow:
+    0 7px 0 #8b0000,
+    0 9px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+.controls button.btnRed:active:not(:disabled),
+.controls button.btnIfRed:active:not(:disabled) {
+  box-shadow: 0 0 0 #8b0000, inset 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(6px) !important;
+  background: #b71c1c !important;
 }
 
 .btnGreen,
 .btnIfGreen {
-  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%) !important;
-  border: 1px solid rgba(34, 197, 94, 0.2) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: #2e7d32 !important;
+  border: none !important;
+  box-shadow:
+    0 6px 0 #1b5e20,
+    0 8px 6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.controls button.btnGreen:hover:not(:disabled),
+.controls button.btnIfGreen:hover:not(:disabled) {
+  background: #388e3c !important;
+  box-shadow:
+    0 7px 0 #1b5e20,
+    0 9px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+.controls button.btnGreen:active:not(:disabled),
+.controls button.btnIfGreen:active:not(:disabled) {
+  box-shadow: 0 0 0 #1b5e20, inset 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(6px) !important;
+  background: #1b5e20 !important;
 }
 
 .btnBlue,
 .btnIfBlue {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
-  border: 1px solid rgba(59, 130, 246, 0.2) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: #1565c0 !important;
+  border: none !important;
+  box-shadow:
+    0 6px 0 #0d47a1,
+    0 8px 6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.controls button.btnBlue:hover:not(:disabled),
+.controls button.btnIfBlue:hover:not(:disabled) {
+  background: #1976d2 !important;
+  box-shadow:
+    0 7px 0 #0d47a1,
+    0 9px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+.controls button.btnBlue:active:not(:disabled),
+.controls button.btnIfBlue:active:not(:disabled) {
+  box-shadow: 0 0 0 #0d47a1, inset 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(6px) !important;
+  background: #0d47a1 !important;
 }
 
 .btnIfRed,
 .btnIfGreen,
 .btnIfBlue {
   font-style: italic;
-  opacity: 0.9;
+  opacity: 1;
+  /* override previous opacity */
+}
+
+/* ========================================
+   GAMEPAD LAYOUT
+   ======================================== */
+.gamepadLayout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  width: 100%;
+  padding-top: var(--spacing-2);
+}
+
+.gamepadLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 160px;
+}
+
+.dpadContainer {
+  display: flex;
+  gap: var(--spacing-2);
+  background: #252525;
+  padding: 15px;
+  border-radius: 20px;
+  box-shadow:
+    inset 3px 3px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.1),
+    0 5px 0 #000000;
+  border: 4px solid #111111;
+}
+
+.dpadBtn {
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  background: #333333 !important;
+  box-shadow:
+    0 5px 0 #111111,
+    0 7px 5px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 0 !important;
+}
+
+.dpadBtn:active:not(:disabled) {
+  transform: translateY(5px) !important;
+  box-shadow:
+    0 0 0 #111111,
+    inset 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dpadBtn svg {
+  font-size: 1.5rem !important;
+}
+
+.dpadLabel,
+.actionLabel {
+  font-size: 10px;
+  color: #888888;
+  letter-spacing: 3px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 5px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.gamepadRight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  align-items: center;
+  flex: 0 1 auto;
+}
+
+.actionGroup {
+  display: flex;
+  gap: var(--spacing-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.actionGroup button {
+  min-width: 65px !important;
+  height: 65px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem !important;
+  font-weight: bold;
+}
+
+/* Specific styling overrides for action buttons to look round */
+.functionCallBtn {
+  border-radius: 50% !important;
+  width: 65px;
+  height: 65px;
+  padding: 0;
+}
+
+.gamepadRight .btnRed,
+.gamepadRight .btnGreen,
+.gamepadRight .btnBlue,
+.gamepadRight .btnIfRed,
+.gamepadRight .btnIfGreen,
+.gamepadRight .btnIfBlue {
+  border-radius: 50% !important;
+  width: 65px !important;
+  height: 65px !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
+/* Adjust responsive */
+@media (max-width: 991px) {
+  .gamepadLayout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .gamepadRight {
+    align-items: center;
+    width: 100%;
+  }
+
+  .actionGroup {
+    justify-content: center;
+  }
 }
 
 /* ========================================

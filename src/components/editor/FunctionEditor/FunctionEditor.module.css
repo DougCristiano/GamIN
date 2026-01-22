@@ -246,24 +246,39 @@
   padding: var(--spacing-2) var(--spacing-4);
   background: #aa00ff;
   color: #ffffff;
-  border: 2px solid #000000;
-  border-radius: 0;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
-  transition: all var(--transition-normal);
+  transition: all 0.05s ease;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-2);
-  box-shadow: 3px 3px 0px #000000;
+  box-shadow:
+    0 5px 0 #550088,
+    0 7px 5px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
   font-family: 'Courier New', monospace;
   text-transform: uppercase;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .functionBtn:hover:not(:disabled) {
   background: #bb00ff;
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px #000000;
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 0 #550088,
+    0 8px 6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.functionBtn:active:not(:disabled) {
+  transform: translateY(5px);
+  box-shadow:
+    0 0 0 #550088,
+    inset 0 2px 3px rgba(0, 0, 0, 0.6);
 }
 
 .functionBtn:disabled {
@@ -271,51 +286,90 @@
   color: #666666;
   cursor: not-allowed;
   opacity: 0.5;
-  box-shadow: none;
+  box-shadow:
+    0 2px 0 #111111,
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  transform: translateY(3px);
 }
 
 .btnRed,
 .btnIfRed {
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
-  border: 1px solid rgba(239, 68, 68, 0.2) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: #d32f2f !important;
+  border: none !important;
+  box-shadow:
+    0 5px 0 #8b0000,
+    0 7px 5px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+.functionBtn.btnRed:active:not(:disabled),
+.functionBtn.btnIfRed:active:not(:disabled) {
+  box-shadow: 0 0 0 #8b0000, inset 0 2px 3px rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(5px) !important;
+  background: #b71c1c !important;
 }
 
 .btnGreen,
 .btnIfGreen {
-  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%) !important;
-  border: 1px solid rgba(34, 197, 94, 0.2) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: #2e7d32 !important;
+  border: none !important;
+  box-shadow:
+    0 5px 0 #1b5e20,
+    0 7px 5px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+.functionBtn.btnGreen:active:not(:disabled),
+.functionBtn.btnIfGreen:active:not(:disabled) {
+  box-shadow: 0 0 0 #1b5e20, inset 0 2px 3px rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(5px) !important;
+  background: #1b5e20 !important;
 }
 
 .btnBlue,
 .btnIfBlue {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
-  border: 1px solid rgba(59, 130, 246, 0.2) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: #1565c0 !important;
+  border: none !important;
+  box-shadow:
+    0 5px 0 #0d47a1,
+    0 7px 5px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+.functionBtn.btnBlue:active:not(:disabled),
+.functionBtn.btnIfBlue:active:not(:disabled) {
+  box-shadow: 0 0 0 #0d47a1, inset 0 2px 3px rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(5px) !important;
+  background: #0d47a1 !important;
 }
 
 .btnIfRed,
 .btnIfGreen,
 .btnIfBlue {
   font-style: italic;
-  opacity: 0.9;
+  opacity: 1;
 }
 
 /* ========================================
    RETRO BUTTONS & ALERTS
    ======================================== */
 .clearBtn {
-  background: #ff0000;
-  box-shadow: 3px 3px 0px #000000;
-  border: 2px solid #000000;
+  background: #d32f2f;
+  box-shadow:
+    0 5px 0 #8b0000,
+    0 7px 5px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  border: none;
   color: #ffffff;
 }
 
 .clearBtn:hover:not(:disabled) {
-  background: #ff3333;
-  box-shadow: 4px 4px 0px #000000;
-  transform: translate(-1px, -1px);
+  background: #e53935;
+  box-shadow:
+    0 6px 0 #8b0000,
+    0 8px 6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
 }
 
 .emptyState {
