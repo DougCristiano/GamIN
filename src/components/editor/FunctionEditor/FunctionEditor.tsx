@@ -202,13 +202,13 @@ export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFun
           <button onClick={() => addCommandToFunction('RIGHT')} className={styles.functionBtn} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit)}>
             <FaArrowRight /> Direita
           </button>
-          <button onClick={() => addCommandToFunction('F0')} className={styles.functionBtn} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit) || !isFunctionEnabled('F0')}>
+          <button onClick={() => addCommandToFunction('F0')} className={`${styles.functionBtn} ${styles.btnFunctionCall}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit) || !isFunctionEnabled('F0')}>
             F0
           </button>
-          <button onClick={() => addCommandToFunction('F1')} className={styles.functionBtn} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit) || !isFunctionEnabled('F1')}>
+          <button onClick={() => addCommandToFunction('F1')} className={`${styles.functionBtn} ${styles.btnFunctionCall}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit) || !isFunctionEnabled('F1')}>
             F1
           </button>
-          <button onClick={() => addCommandToFunction('F2')} className={styles.functionBtn} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit) || !isFunctionEnabled('F2')}>
+          <button onClick={() => addCommandToFunction('F2')} className={`${styles.functionBtn} ${styles.btnFunctionCall}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit) || !isFunctionEnabled('F2')}>
             F2
           </button>
 

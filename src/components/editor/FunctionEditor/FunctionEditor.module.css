@@ -236,18 +236,26 @@
 /* ========================================
    FUNCTION BUTTONS
    ======================================== */
+/* ========================================
+   FUNCTION BUTTONS
+   ======================================== */
 .functionButtons {
   display: flex;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   flex-wrap: wrap;
+  justify-content: center;
+  /* Better spacing alignment */
+  margin-top: var(--spacing-2);
 }
 
 .functionBtn {
-  padding: var(--spacing-2) var(--spacing-4);
-  background: #aa00ff;
-  color: #ffffff;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: #333333;
+  /* Dark grey plastic base like ControlPanel */
+  color: #e0e0e0;
   border: none;
-  border-radius: 6px;
+  border-radius: 30px;
+  /* Pill shape - NOT square */
   cursor: pointer;
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
@@ -257,39 +265,69 @@
   justify-content: center;
   gap: var(--spacing-2);
   box-shadow:
-    0 5px 0 #550088,
-    0 7px 5px rgba(0, 0, 0, 0.5),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    0 6px 0 #111111,
+    0 8px 6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.3);
   font-family: 'Courier New', monospace;
   text-transform: uppercase;
-  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 0 #000000;
+  min-width: 100px;
+  /* Ensure consistency */
 }
 
 .functionBtn:hover:not(:disabled) {
-  background: #bb00ff;
+  background: #444444;
   transform: translateY(-1px);
   box-shadow:
-    0 6px 0 #550088,
-    0 8px 6px rgba(0, 0, 0, 0.5),
-    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    0 7px 0 #111111,
+    0 9px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.3);
 }
 
 .functionBtn:active:not(:disabled) {
-  transform: translateY(5px);
+  transform: translateY(6px);
   box-shadow:
-    0 0 0 #550088,
+    0 0 0 #111111,
     inset 0 2px 3px rgba(0, 0, 0, 0.6);
+  background: #2a2a2a;
 }
 
 .functionBtn:disabled {
-  background: #333333;
-  color: #666666;
-  cursor: not-allowed;
-  opacity: 0.5;
+  background: #2a2a2a;
+  color: #555555;
   box-shadow:
     0 2px 0 #111111,
     inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  transform: translateY(3px);
+  transform: translateY(4px);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Specific button colors overrides */
+
+/* Function Call Buttons (F0, F1, F2) inside the editor */
+.btnFunctionCall {
+  background: #aa00ff;
+  /* Purple for F-calls */
+  box-shadow:
+    0 6px 0 #550088,
+    0 8px 6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.btnFunctionCall:hover:not(:disabled) {
+  background: #bb00ff;
+  box-shadow:
+    0 7px 0 #550088,
+    0 9px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.btnFunctionCall:active:not(:disabled) {
+  box-shadow: 0 0 0 #550088, inset 0 2px 3px rgba(0, 0, 0, 0.6);
+  background: #8800cc;
 }
 
 .btnRed,
@@ -297,15 +335,15 @@
   background: #d32f2f !important;
   border: none !important;
   box-shadow:
-    0 5px 0 #8b0000,
-    0 7px 5px rgba(0, 0, 0, 0.6),
+    0 6px 0 #8b0000,
+    0 8px 6px rgba(0, 0, 0, 0.6),
     inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
 }
 
 .functionBtn.btnRed:active:not(:disabled),
 .functionBtn.btnIfRed:active:not(:disabled) {
   box-shadow: 0 0 0 #8b0000, inset 0 2px 3px rgba(0, 0, 0, 0.6) !important;
-  transform: translateY(5px) !important;
+  transform: translateY(6px) !important;
   background: #b71c1c !important;
 }
 
@@ -314,15 +352,15 @@
   background: #2e7d32 !important;
   border: none !important;
   box-shadow:
-    0 5px 0 #1b5e20,
-    0 7px 5px rgba(0, 0, 0, 0.6),
+    0 6px 0 #1b5e20,
+    0 8px 6px rgba(0, 0, 0, 0.6),
     inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
 }
 
 .functionBtn.btnGreen:active:not(:disabled),
 .functionBtn.btnIfGreen:active:not(:disabled) {
   box-shadow: 0 0 0 #1b5e20, inset 0 2px 3px rgba(0, 0, 0, 0.6) !important;
-  transform: translateY(5px) !important;
+  transform: translateY(6px) !important;
   background: #1b5e20 !important;
 }
 
@@ -331,15 +369,15 @@
   background: #1565c0 !important;
   border: none !important;
   box-shadow:
-    0 5px 0 #0d47a1,
-    0 7px 5px rgba(0, 0, 0, 0.6),
+    0 6px 0 #0d47a1,
+    0 8px 6px rgba(0, 0, 0, 0.6),
     inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
 }
 
 .functionBtn.btnBlue:active:not(:disabled),
 .functionBtn.btnIfBlue:active:not(:disabled) {
   box-shadow: 0 0 0 #0d47a1, inset 0 2px 3px rgba(0, 0, 0, 0.6) !important;
-  transform: translateY(5px) !important;
+  transform: translateY(6px) !important;
   background: #0d47a1 !important;
 }
 
