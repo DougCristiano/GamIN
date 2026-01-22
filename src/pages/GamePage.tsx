@@ -19,7 +19,7 @@ function GamePage() {
     };
 
     // Carregar na montagem
-    // loadLevels(); // Temporariamente desabilitado para forçar novos níveis
+    loadLevels();
 
     // Listener para mudanças no localStorage (sincroniza entre guias)
     const handleStorageChange = (e: StorageEvent) => {
