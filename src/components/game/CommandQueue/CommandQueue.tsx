@@ -40,11 +40,7 @@ export const CommandQueue: React.FC<CommandQueueProps> = ({ commands, currentCom
               key={index}
               className={`${styles.commandItem} ${index === currentCommandIndex ? styles.executing : ''}`}
             >
-              {cmd.startsWith('F') ? (
-                <span className={styles.functionBadge}>{getCommandLabel(cmd)}</span>
-              ) : (
-                getCommandLabel(cmd)
-              )}
+              {getCommandLabel(cmd)}
             </span>
           ))}
         </div>

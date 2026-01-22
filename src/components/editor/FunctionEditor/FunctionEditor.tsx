@@ -5,8 +5,6 @@ import {
   FaArrowRight,
   FaTrash,
   FaExclamationTriangle,
-  FaChevronDown,
-  FaChevronUp,
 } from 'react-icons/fa';
 import type { Command, FunctionDefinition, FunctionLimits } from '@/types';
 import styles from './FunctionEditor.module.css';
@@ -22,7 +20,7 @@ type FunctionName = 'F0' | 'F1' | 'F2';
 
 export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFunctionsChange, functionLimits, disabled = false }) => {
   const [activeFunction, setActiveFunction] = useState<FunctionName>('F0');
-  const [showInstructions, setShowInstructions] = useState(true);
+
 
   const getCurrentFunction = (): FunctionDefinition => {
     return functions.find(f => f.name === activeFunction) || { name: activeFunction, commands: [] };
@@ -133,20 +131,7 @@ export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFun
 
   return (
     <div className={styles.functionEditor}>
-      <button
-        className={styles.instructionsToggle}
-        onClick={() => setShowInstructions(!showInstructions)}
-      >
-        {showInstructions ? <FaChevronUp /> : <FaChevronDown />}
-        <span>💡 Instruções sobre Funções</span>
-      </button>
 
-      {showInstructions && (
-        <div className={styles.functionInfo}>
-          <strong>Funções:</strong> Crie sequências de comandos reutilizáveis. Você pode chamar
-          outras funções ou até a própria função (recursão)!
-        </div>
-      )}
 
       {/* Function Tabs */}
       <div className={styles.functionTabs}>
@@ -226,6 +211,29 @@ export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFun
           <button onClick={() => addCommandToFunction('F2')} className={styles.functionBtn} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit) || !isFunctionEnabled('F2')}>
             F2
           </button>
+
+          {/* Paint Buttons */}
+          <button onClick={() => addCommandToFunction('PAINT_RED')} className={`${styles.functionBtn} ${styles.btnRed}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit)}>
+            Pintar 🟥
+          </button>
+          <button onClick={() => addCommandToFunction('PAINT_GREEN')} className={`${styles.functionBtn} ${styles.btnGreen}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit)}>
+            Pintar 🟩
+          </button>
+          <button onClick={() => addCommandToFunction('PAINT_BLUE')} className={`${styles.functionBtn} ${styles.btnBlue}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit)}>
+            Pintar 🟦
+          </button>
+
+          {/* Conditional Buttons */}
+          <button onClick={() => addCommandToFunction('IF_RED')} className={`${styles.functionBtn} ${styles.btnIfRed}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit)}>
+            Se 🟥
+          </button>
+          <button onClick={() => addCommandToFunction('IF_GREEN')} className={`${styles.functionBtn} ${styles.btnIfGreen}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit)}>
+            Se 🟩
+          </button>
+          <button onClick={() => addCommandToFunction('IF_BLUE')} className={`${styles.functionBtn} ${styles.btnIfBlue}`} disabled={disabled || (currentLimit !== undefined && currentFunc.commands.length >= currentLimit)}>
+            Se 🟦
+          </button>
+
           <button
             onClick={clearFunction}
             className={`${styles.functionBtn} ${styles.clearBtn}`}
@@ -235,35 +243,7 @@ export const FunctionEditor: React.FC<FunctionEditorProps> = ({ functions, onFun
           </button>
         </div>
 
-        {/* Function Preview - Below definition */}
-        {enabledFunctions.map(funcName => {
-          const func = functions.find(f => f.name === funcName);
-          const count = func?.commands.length || 0;
-          const isSaved = count > 0;
 
-          if (!isSaved) return null;
-
-          return (
-            <div key={funcName} className={styles.functionPreview}>
-              <div className={styles.previewLabel}>{funcName}:</div>
-              <div className={styles.previewCommands}>
-                {func!.commands.map((cmd, idx) => (
-                  <span key={idx} className={styles.previewIcon}>
-                    {cmd === 'MOVE' ? (
-                      <FaArrowUp size={12} />
-                    ) : cmd === 'LEFT' ? (
-                      <FaArrowLeft size={12} />
-                    ) : cmd === 'RIGHT' ? (
-                      <FaArrowRight size={12} />
-                    ) : (
-                      <span className={styles.previewFuncName}>{cmd}</span>
-                    )}
-                  </span>
-                ))}
-              </div>
-            </div>
-          );
-        })}
 
         {/* Recursion Warning */}
         {hasRecursion && (
