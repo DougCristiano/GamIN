@@ -5,6 +5,7 @@ import { LEVELS } from '@/data';
 import { KEY_COLORS, getKeyColor } from '@/utils/keyColors';
 import styles from './LevelEditor.module.css';
 import { FaPaintBrush } from 'react-icons/fa';
+import { useModal } from '@/contexts';
 
 interface LevelEditorProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ interface LevelEditorProps {
 type EditorMode = 'robot' | 'star' | 'wall' | 'key' | 'door' | 'paint';
 
 const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPage = false }) => {
+  const { showAlert, showConfirm } = useModal();
   // Carregar níveis salvos do localStorage ou usar níveis padrão
   const [levels, setLevels] = useState<LevelConfig[]>(() => {
     const savedLevels = localStorage.getItem('customLevels');
@@ -109,19 +111,19 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
     const isWall = wallIndex !== -1;
 
     if (editorMode !== 'wall' && isWall) {
-      alert('⚠️ Célula ocupada por uma parede!');
+      showAlert('⚠️ Célula ocupada por uma parede!');
       return;
     }
 
     if (editorMode === 'robot') {
       if (isCellOccupied(x, y, 'robot')) {
-        alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+        showAlert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
         return;
       }
       updatedLevel.robotStart = { x, y };
     } else if (editorMode === 'star') {
       if (updatedLevel.robotStart.x === x && updatedLevel.robotStart.y === y) {
-        alert('⚠️ A estrela não pode estar na mesma posição do robô!');
+        showAlert('⚠️ A estrela não pode estar na mesma posição do robô!');
         return;
       }
 
@@ -133,7 +135,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       } else {
         // Check if cell is occupied by other elements
         if (isCellOccupied(x, y, 'star')) {
-          alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+          showAlert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
           return;
         }
         // Add star
@@ -148,7 +150,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       } else {
         // Check if cell is occupied by other elements
         if (isCellOccupied(x, y, 'key')) {
-          alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+          showAlert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
           return;
         }
         // Add key with selected color
@@ -163,7 +165,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       } else {
         // Check if cell is occupied by other elements
         if (isCellOccupied(x, y, 'door')) {
-          alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+          showAlert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
           return;
         }
         // Add door with selected color
@@ -174,7 +176,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
         (updatedLevel.robotStart.x === x && updatedLevel.robotStart.y === y) ||
         stars.some(s => s.x === x && s.y === y)
       ) {
-        alert('⚠️ Não é possível colocar parede na posição do robô ou estrela!');
+        showAlert('⚠️ Não é possível colocar parede na posição do robô ou estrela!');
         return;
       }
 
@@ -183,14 +185,14 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       } else {
         // Check if cell is occupied by other elements
         if (isCellOccupied(x, y, 'wall')) {
-          alert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
+          showAlert('⚠️ Esta célula já está ocupada! Remova o elemento existente primeiro.');
           return;
         }
         updatedLevel.obstacles = [...walls, { x, y }];
       }
     } else if (editorMode === 'paint') {
       if (isWall) {
-        alert('⚠️ Não é possível pintar uma parede!');
+        showAlert('⚠️ Não é possível pintar uma parede!');
         return;
       }
 
@@ -214,12 +216,12 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
     if (!currentLevel) return;
 
     if (!levelName.trim()) {
-      alert('⚠️ Por favor, dê um nome ao nível!');
+      showAlert('⚠️ Por favor, dê um nome ao nível!');
       return;
     }
 
     if (currentLevel.starPositions.length === 0) {
-      alert('⚠️ O nível precisa ter pelo menos uma estrela!');
+      showAlert('⚠️ O nível precisa ter pelo menos uma estrela!');
       return;
     }
 
@@ -228,7 +230,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
       s => s.x === currentLevel.robotStart.x && s.y === currentLevel.robotStart.y
     );
     if (robotOnStar) {
-      alert('⚠️ O robô e a estrela não podem estar na mesma posição!');
+      showAlert('⚠️ O robô e a estrela não podem estar na mesma posição!');
       return;
     }
 
@@ -237,7 +239,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
 
     setLevels(updatedLevels);
     onSave(updatedLevels);
-    alert('✅ Nível salvo com sucesso!');
+    showAlert('✅ Nível salvo com sucesso!');
   };
 
   const handleNewLevel = () => {
@@ -258,26 +260,34 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
 
   const handleDeleteLevel = () => {
     if (levels.length <= 1) {
-      alert('⚠️ Você precisa ter pelo menos um nível!');
+      showAlert('⚠️ Você precisa ter pelo menos um nível!');
       return;
     }
 
-    if (confirm(`Tem certeza que deseja deletar o ${currentLevel?.name}?`)) {
-      const updatedLevels = levels.filter(l => l.id !== selectedLevelId);
-      setLevels(updatedLevels);
-      setSelectedLevelId(updatedLevels[0].id);
-      onSave(updatedLevels);
-    }
+    showConfirm(
+      `Tem certeza que deseja deletar o ${currentLevel?.name}?`,
+      'Confirmar Exclusão',
+      () => {
+        const updatedLevels = levels.filter(l => l.id !== selectedLevelId);
+        setLevels(updatedLevels);
+        setSelectedLevelId(updatedLevels[0].id);
+        onSave(updatedLevels);
+      }
+    );
   };
 
   const handleResetToDefaults = () => {
-    if (confirm('⚠️ Tem certeza que deseja resetar todos os níveis aos padrões? Todas as suas alterações serão perdidas!')) {
-      const defaultLevels = [...LEVELS];
-      setLevels(defaultLevels);
-      setSelectedLevelId(1);
-      onSave(defaultLevels);
-      alert('✅ Níveis resetados aos padrões!');
-    }
+    showConfirm(
+      '⚠️ Tem certeza que deseja resetar todos os níveis aos padrões? Todas as suas alterações serão perdidas!',
+      'Resetar Tudo',
+      () => {
+        const defaultLevels = [...LEVELS];
+        setLevels(defaultLevels);
+        setSelectedLevelId(1);
+        onSave(defaultLevels);
+        showAlert('✅ Níveis resetados aos padrões!');
+      }
+    );
   };
 
   const renderGrid = () => {
@@ -410,21 +420,26 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
                     setTempGridSize(val.toString());
 
                     if (currentLevel && val !== currentLevel.gridSize) {
-                      if (confirm('⚠️ Mudar o tamanho irá resetar o mapa. Continuar?')) {
-                        setCurrentLevel({
-                          ...currentLevel,
-                          gridSize: val,
-                          robotStart: { x: 0, y: 0 },
-                          starPositions: [{ x: val - 1, y: val - 1 }],
-                          obstacles: [],
-                          keys: [],
-                          doors: [],
-                          coloredCells: []
-                        });
-                      } else {
-                        // Revert input to current level size
-                        setTempGridSize(currentLevel.gridSize?.toString() || '5');
-                      }
+                      showConfirm(
+                        '⚠️ Mudar o tamanho irá resetar o mapa. Continuar?',
+                        'Mudar Tamanho',
+                        () => {
+                          setCurrentLevel({
+                            ...currentLevel,
+                            gridSize: val,
+                            robotStart: { x: 0, y: 0 },
+                            starPositions: [{ x: val - 1, y: val - 1 }],
+                            obstacles: [],
+                            keys: [],
+                            doors: [],
+                            coloredCells: []
+                          });
+                        },
+                        () => {
+                          // Revert input to current level size
+                          setTempGridSize(currentLevel.gridSize?.toString() || '5');
+                        }
+                      );
                     }
                   }}
                   title="Aplicar novo tamanho"

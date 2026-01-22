@@ -12,6 +12,7 @@ interface UseCommandsOptions {
   onWin?: () => void;
   onExecutionStart?: () => void;
   onExecutionEnd?: () => void;
+  onError?: (message: string) => void;
 }
 
 interface UseCommandsReturn {
@@ -53,7 +54,7 @@ const DEFAULT_FUNCTIONS: FunctionDefinition[] = [
 ];
 
 export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn => {
-  const { onWin, onExecutionStart, onExecutionEnd } = options;
+  const { onWin, onExecutionStart, onExecutionEnd, onError } = options;
 
   const [commandQueue, setCommandQueue] = useState<Command[]>([]);
   const [functions, setFunctions] = useState<FunctionDefinition[]>(DEFAULT_FUNCTIONS);
@@ -120,9 +121,12 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
 
       // Protection against infinite loops
       if (expandedCommands.length > MAX_EXECUTION_STEPS) {
-        alert(
-          `⚠️ Muitos comandos! Limite de ${MAX_EXECUTION_STEPS} passos excedido. Verifique se há recursão infinita.`
-        );
+        const msg = `⚠️ Muitos comandos! Limite de ${MAX_EXECUTION_STEPS} passos excedido. Verifique se há recursão infinita.`;
+        if (onError) {
+          onError(msg);
+        } else {
+          alert(msg);
+        }
         setIsExecuting(false);
         onExecutionEnd?.();
         return false;
@@ -236,7 +240,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
       onExecutionEnd?.();
       return false;
     },
-    [commandQueue, functions, onWin, onExecutionStart, onExecutionEnd]
+    [commandQueue, functions, onWin, onExecutionStart, onExecutionEnd, onError]
   );
 
   // Remove the last command from the queue

@@ -19,6 +19,7 @@ import {
   CommandQueue,
   type LevelStatus,
 } from '@/components';
+import { useModal } from '@/contexts';
 import robotImg from '@/assets/robot.png';
 import styles from './Game.module.css';
 
@@ -27,11 +28,11 @@ interface GameProps {
 }
 
 export const Game: React.FC<GameProps> = ({ customLevels }) => {
+  const { showAlert, hideModal } = useModal();
   const boardRef = useRef<HTMLDivElement>(null);
   const [boardSize, setBoardSize] = useState(600);
   const [levelStarted, setLevelStarted] = useState(false);
   const [timerRunning, setTimerRunning] = useState(false);
-  const [levelFailed, setLevelFailed] = useState(false);
   const [levelStatuses, setLevelStatuses] = useState<Record<number, LevelStatus>>({});
 
   // Update board size on resize
@@ -84,13 +85,23 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
       setTimerRunning(false);
       setLevelStatuses(prev => ({ ...prev, [currentLevelId]: 'success' }));
       if (currentLevelId < totalLevels) {
-        alert(`✅ ${levelName} Completado! Indo para o próximo nível...`);
-        setCurrentLevelId(currentLevelId + 1);
+        let hasAdvanced = false;
+        const advance = () => {
+          if (hasAdvanced) return;
+          hasAdvanced = true;
+          hideModal();
+          setCurrentLevelId(currentLevelId + 1);
+        };
+
+        showAlert(`✅ ${levelName} Completado! Indo para o próximo nível...`, 'Nível Completado', advance);
+        setTimeout(advance, 3000);
       } else {
-        alert('🎉 Parabéns! Você completou todos os níveis!');
-        setCurrentLevelId(1);
+        showAlert('🎉 Parabéns! Você completou todos os níveis!', 'Fim de Jogo', () => {
+          setCurrentLevelId(1);
+        });
       }
     },
+    onError: (msg) => showAlert(msg, 'Erro na Execução'),
   });
 
   // Handle keyboard shortcuts
@@ -119,7 +130,6 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
   useEffect(() => {
     setLevelStarted(false);
     setTimerRunning(false);
-    setLevelFailed(false);
     clearQueue();
   }, [currentLevelId, clearQueue]);
 
@@ -134,14 +144,12 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
   // Handle time up
   const handleTimeUp = () => {
     setTimerRunning(false);
-    setLevelFailed(true);
     setLevelStatuses(prev => ({ ...prev, [currentLevelId]: 'fail' }));
-    alert(`⏰ Tempo esgotado! Você não completou ${levelName}.`);
-    if (currentLevelId < totalLevels) {
-      setTimeout(() => {
+    showAlert(`⏰ Tempo esgotado! Você não completou ${levelName}.`, 'Tempo Esgotado', () => {
+      if (currentLevelId < totalLevels) {
         setCurrentLevelId(currentLevelId + 1);
-      }, 1000);
-    }
+      }
+    });
   };
 
   // Handle play button
@@ -304,12 +312,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
 
 
 
-          {/* Level Failed Message */}
-          {levelFailed && (
-            <div className={styles.failedMessage}>
-              ⏰ Tempo esgotado! Próximo nível em breve...
-            </div>
-          )}
+
 
           <div
             ref={boardRef}
