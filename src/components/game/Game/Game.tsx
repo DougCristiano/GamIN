@@ -74,6 +74,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     recursionWarning,
     currentCommandIndex,
     addCommand,
+    removeLastCommand,
     clearQueue,
     setFunctions,
     clearWarning,
@@ -91,6 +92,28 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
       }
     },
   });
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA'
+      ) {
+        return;
+      }
+
+      if (e.key === 'Backspace') {
+        if (levelStarted && !isExecuting) {
+          removeLastCommand();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [levelStarted, isExecuting, removeLastCommand]);
 
   // Reset level started state when level changes (moved after hooks)
   useEffect(() => {

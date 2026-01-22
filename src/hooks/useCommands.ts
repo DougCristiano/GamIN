@@ -24,6 +24,7 @@ interface UseCommandsReturn {
 
   // Actions
   addCommand: (cmd: Command) => void;
+  removeLastCommand: () => void;
   clearQueue: () => void;
   setFunctions: React.Dispatch<React.SetStateAction<FunctionDefinition[]>>;
   clearWarning: () => void;
@@ -238,6 +239,15 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
     [commandQueue, functions, onWin, onExecutionStart, onExecutionEnd]
   );
 
+  // Remove the last command from the queue
+  const removeLastCommand = useCallback(() => {
+    if (isExecuting) return;
+    setCommandQueue(prev => {
+      if (prev.length === 0) return prev;
+      return prev.slice(0, -1);
+    });
+  }, [isExecuting]);
+
   return {
     // State
     commandQueue,
@@ -248,6 +258,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
 
     // Actions
     addCommand,
+    removeLastCommand,
     clearQueue,
     setFunctions,
     clearWarning,
