@@ -18,6 +18,7 @@ interface ControlPanelProps {
   maxCommands?: number;
   functionLimits?: FunctionLimits;
   commandQueue: Command[];
+  currentCommandIndex?: number;
   disabled?: boolean;
 }
 
@@ -31,6 +32,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   maxCommands,
   functionLimits,
   commandQueue,
+  currentCommandIndex = -1,
   disabled = false,
 }) => {
   const isLimitReached = maxCommands !== undefined && commandCount >= maxCommands;
@@ -38,63 +40,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   return (
     <div className={styles.controlsContainer}>
-      <div className={styles.controls}>
-        {maxCommands !== undefined && (
-          <div className={styles.commandCounter}>
-            <strong>Comandos Máximos nesse nível:</strong> {commandCount} / {maxCommands}
-            {isLimitReached && <span className={styles.limitWarning}> ⚠️ Limite atingido!</span>}
-          </div>
-        )}
-        <button onClick={() => onAddCommand('LEFT')} disabled={!canAddCommand}>
-          <FaArrowLeft /> Girar Esq
-        </button>
-        <button onClick={() => onAddCommand('MOVE')} disabled={!canAddCommand}>
-          <FaArrowUp /> Frente
-        </button>
-        <button onClick={() => onAddCommand('RIGHT')} disabled={!canAddCommand}>
-          Girar Dir <FaArrowRight />
-        </button>
-        {functionLimits?.F0 !== undefined && (
-          <button
-            onClick={() => onAddCommand('F0')}
-            className={styles.functionCallBtn}
-            disabled={!canAddCommand}
-          >
-            F0
-          </button>
-        )}
-        {functionLimits?.F1 !== undefined && (
-          <button
-            onClick={() => onAddCommand('F1')}
-            className={styles.functionCallBtn}
-            disabled={!canAddCommand}
-          >
-            F1
-          </button>
-        )}
-        {functionLimits?.F2 !== undefined && (
-          <button
-            onClick={() => onAddCommand('F2')}
-            className={styles.functionCallBtn}
-            disabled={!canAddCommand}
-          >
-            F2
-          </button>
-        )}
+      <CommandQueue commands={commandQueue} currentCommandIndex={currentCommandIndex} />
 
-        {/* Color Commands */}
-        <div className={styles.colorControls}>
-          <div className={styles.buttonGroup}>
-            <button onClick={() => onAddCommand('PAINT_RED')} disabled={!canAddCommand} className={styles.btnRed} title="Pintar Vermelho">🟥 Pintar</button>
-            <button onClick={() => onAddCommand('PAINT_GREEN')} disabled={!canAddCommand} className={styles.btnGreen} title="Pintar Verde">🟩 Pintar</button>
-            <button onClick={() => onAddCommand('PAINT_BLUE')} disabled={!canAddCommand} className={styles.btnBlue} title="Pintar Azul">🟦 Pintar</button>
-          </div>
-          <div className={styles.buttonGroup}>
-            <button onClick={() => onAddCommand('IF_RED')} disabled={!canAddCommand} className={styles.btnIfRed} title="Se estiver no Vermelho">Se 🟥</button>
-            <button onClick={() => onAddCommand('IF_GREEN')} disabled={!canAddCommand} className={styles.btnIfGreen} title="Se estiver no Verde">Se 🟩</button>
-            <button onClick={() => onAddCommand('IF_BLUE')} disabled={!canAddCommand} className={styles.btnIfBlue} title="Se estiver no Azul">Se 🟦</button>
-          </div>
-        </div>
+      {/* Action Buttons - Right after queue */}
+      <div className={styles.actionButtons}>
         <button onClick={onPlay} disabled={disabled || isExecuting || !hasCommands} className={styles.playBtn}>
           <FaPlay /> PLAY
         </button>
@@ -103,7 +52,74 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         </button>
       </div>
 
-      <CommandQueue commands={commandQueue} />
+      <div className={styles.controls}>
+        {maxCommands !== undefined && (
+          <div className={styles.commandCounter}>
+            <strong>Comandos Máximos nesse nível:</strong> {commandCount} / {maxCommands}
+            {isLimitReached && <span className={styles.limitWarning}> ⚠️ Limite atingido!</span>}
+          </div>
+        )}
+
+        {/* Movement Commands */}
+        <div className={styles.commandGroup}>
+          <button onClick={() => onAddCommand('LEFT')} disabled={!canAddCommand}>
+            <FaArrowLeft /> Girar Esq
+          </button>
+          <button onClick={() => onAddCommand('MOVE')} disabled={!canAddCommand}>
+            <FaArrowUp /> Frente
+          </button>
+          <button onClick={() => onAddCommand('RIGHT')} disabled={!canAddCommand}>
+            Girar Dir <FaArrowRight />
+          </button>
+        </div>
+
+        {/* Function Calls */}
+        {(functionLimits?.F0 !== undefined || functionLimits?.F1 !== undefined || functionLimits?.F2 !== undefined) && (
+          <div className={styles.commandGroup}>
+            {functionLimits?.F0 !== undefined && (
+              <button
+                onClick={() => onAddCommand('F0')}
+                className={styles.functionCallBtn}
+                disabled={!canAddCommand}
+              >
+                F0
+              </button>
+            )}
+            {functionLimits?.F1 !== undefined && (
+              <button
+                onClick={() => onAddCommand('F1')}
+                className={styles.functionCallBtn}
+                disabled={!canAddCommand}
+              >
+                F1
+              </button>
+            )}
+            {functionLimits?.F2 !== undefined && (
+              <button
+                onClick={() => onAddCommand('F2')}
+                className={styles.functionCallBtn}
+                disabled={!canAddCommand}
+              >
+                F2
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Paint Commands */}
+        <div className={styles.commandGroup}>
+          <button onClick={() => onAddCommand('PAINT_RED')} disabled={!canAddCommand} className={styles.btnRed} title="Pintar Vermelho">🟥 Pintar</button>
+          <button onClick={() => onAddCommand('PAINT_GREEN')} disabled={!canAddCommand} className={styles.btnGreen} title="Pintar Verde">🟩 Pintar</button>
+          <button onClick={() => onAddCommand('PAINT_BLUE')} disabled={!canAddCommand} className={styles.btnBlue} title="Pintar Azul">🟦 Pintar</button>
+        </div>
+
+        {/* Conditional Commands */}
+        <div className={styles.commandGroup}>
+          <button onClick={() => onAddCommand('IF_RED')} disabled={!canAddCommand} className={styles.btnIfRed} title="Se estiver no Vermelho">Se 🟥</button>
+          <button onClick={() => onAddCommand('IF_GREEN')} disabled={!canAddCommand} className={styles.btnIfGreen} title="Se estiver no Verde">Se 🟩</button>
+          <button onClick={() => onAddCommand('IF_BLUE')} disabled={!canAddCommand} className={styles.btnIfBlue} title="Se estiver no Azul">Se 🟦</button>
+        </div>
+      </div>
     </div>
   );
 };

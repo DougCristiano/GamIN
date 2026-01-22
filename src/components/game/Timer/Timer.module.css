@@ -1,16 +1,18 @@
 .timer {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--spacing-2);
-    padding: var(--spacing-3) var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-5);
     background: var(--color-bg-primary);
     border: 2px solid var(--color-primary-500);
     border-radius: var(--radius-lg);
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-bold);
     color: var(--color-primary-600);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg);
     transition: all var(--transition-normal);
+    min-width: 150px;
 }
 
 .timer svg {
@@ -26,7 +28,23 @@
 .timer.warning {
     border-color: var(--color-error);
     color: var(--color-error);
-    animation: pulse-warning 1s infinite;
+    animation: pulse-warning 1s infinite, shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    75% {
+        transform: translateX(3px);
+    }
 }
 
 @keyframes pulse-warning {

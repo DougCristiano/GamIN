@@ -44,22 +44,23 @@
 }
 
 /* ========================================
-   FUNCTION PREVIEW (in tab)
+   FUNCTION PREVIEW (below definition)
    ======================================== */
 .functionPreview {
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: var(--radius-md);
-  padding: var(--spacing-2);
+  padding: var(--spacing-3);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-1);
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
 }
 
 .previewLabel {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-primary-400);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-600);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -67,7 +68,7 @@
 .previewCommands {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-1);
+  gap: var(--spacing-2);
   align-items: center;
 }
 
@@ -273,6 +274,33 @@
   text-align: center;
   padding: var(--spacing-4);
   font-size: var(--font-size-sm);
+}
+
+.instructionsToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--color-primary-600);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  margin-bottom: var(--spacing-3);
+}
+
+.instructionsToggle:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+.instructionsToggle svg {
+  font-size: var(--font-size-xs);
 }
 
 .functionInfo {

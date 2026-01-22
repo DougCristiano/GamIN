@@ -20,6 +20,7 @@ interface UseCommandsReturn {
   functions: FunctionDefinition[];
   isExecuting: boolean;
   recursionWarning: string | null;
+  currentCommandIndex: number;
 
   // Actions
   addCommand: (cmd: Command) => void;
@@ -57,6 +58,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
   const [functions, setFunctions] = useState<FunctionDefinition[]>(DEFAULT_FUNCTIONS);
   const [isExecuting, setIsExecuting] = useState(false);
   const [recursionWarning, setRecursionWarning] = useState<string | null>(null);
+  const [currentCommandIndex, setCurrentCommandIndex] = useState(-1);
 
   // Add a command to the queue
   const addCommand = useCallback(
@@ -82,6 +84,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
     setCommandQueue([]);
     setIsExecuting(false);
     setRecursionWarning(null);
+    setCurrentCommandIndex(-1);
   }, []);
 
   // Execute commands with animation
@@ -132,6 +135,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
 
       for (let i = 0; i < expandedCommands.length; i++) {
         const cmd = expandedCommands[i];
+        setCurrentCommandIndex(i);
 
         // Handles PAINT commands
         if (cmd.startsWith('PAINT_')) {
@@ -227,6 +231,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
       }
 
       setIsExecuting(false);
+      setCurrentCommandIndex(-1);
       onExecutionEnd?.();
       return false;
     },
@@ -239,6 +244,7 @@ export const useCommands = (options: UseCommandsOptions = {}): UseCommandsReturn
     functions,
     isExecuting,
     recursionWarning,
+    currentCommandIndex,
 
     // Actions
     addCommand,

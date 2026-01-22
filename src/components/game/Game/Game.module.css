@@ -2,12 +2,28 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: var(--spacing-4);
+  gap: var(--spacing-3);
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-  padding: var(--spacing-6) var(--spacing-8);
+  padding: var(--spacing-4) var(--spacing-6);
   animation: fadeIn 0.5s ease-out;
+}
+
+/* Header Row: Title and Progress */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  flex: 1;
 }
 
 /* ========================================
@@ -49,10 +65,10 @@
   width: 600px;
   height: 600px;
   background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
-  border: 3px solid var(--color-primary-600);
+  border: 2px solid var(--color-primary-600);
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.3),
-    0 0 40px rgba(59, 130, 246, 0.1);
+    0 0 20px rgba(59, 130, 246, 0.08);
   border-radius: var(--radius-xl);
   overflow: hidden;
 }
@@ -60,7 +76,7 @@
 .cell {
   width: 100%;
   height: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,18 +123,17 @@
 }
 
 .startLevelBtn {
-  width: 100%;
-  padding: var(--spacing-4);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
+  width: fit-content;
+  padding: var(--spacing-3) var(--spacing-5);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   background: var(--gradient-primary);
   color: #ffffff;
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   transition: all var(--transition-normal);
-  animation: pulse 2s infinite;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -126,8 +141,9 @@
 }
 
 .startLevelBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
 }
 
 .failedMessage {
@@ -189,7 +205,7 @@
   justify-content: center;
   color: var(--color-star);
   z-index: 5;
-  filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.6));
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4));
 }
 
 .star svg {
@@ -208,7 +224,7 @@
   justify-content: center;
   /* Color is set dynamically via inline style */
   z-index: 5;
-  filter: drop-shadow(0 0 15px currentColor);
+  filter: drop-shadow(0 0 8px currentColor);
 }
 
 .key svg {
@@ -227,7 +243,7 @@
   justify-content: center;
   /* Color is set dynamically via inline style */
   z-index: 5;
-  filter: drop-shadow(0 0 15px currentColor);
+  filter: drop-shadow(0 0 8px currentColor);
   transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
@@ -343,6 +359,11 @@
 @media (max-width: 991px) {
   .container {
     padding: var(--spacing-4) var(--spacing-6);
+  }
+
+  .headerRow {
+    flex-direction: column;
+    gap: var(--spacing-4);
   }
 
   .board {

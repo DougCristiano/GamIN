@@ -56,10 +56,6 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     collectedKeys,
     coloredCells,
     totalLevels,
-    isFirstLevel,
-    isLastLevel,
-    nextLevel,
-    previousLevel,
     setCurrentLevelId,
     setRobot,
     resetLevel,
@@ -74,6 +70,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     functions,
     isExecuting,
     recursionWarning,
+    currentCommandIndex,
     addCommand,
     clearQueue,
     setFunctions,
@@ -194,28 +191,36 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
 
   return (
     <div className={styles.container}>
-      {/* Level Navigation */}
-      <LevelNavigation
-        levelName={levelName}
-        currentLevelId={currentLevelId}
-        totalLevels={totalLevels}
-        onPrevious={previousLevel}
-        onNext={nextLevel}
-        isFirstLevel={isFirstLevel}
-        isLastLevel={isLastLevel}
-      />
+      {/* Header Row: Title (left) and Progress (right) */}
+      <div className={styles.headerRow}>
+        <div className={styles.titleSection}>
+          {/* Level Navigation */}
+          <LevelNavigation
+            levelName={levelName}
+            currentLevelId={currentLevelId}
+            totalLevels={totalLevels}
+          />
+
+          {/* Start Level Button - Below title */}
+          {!levelStarted && (
+            <button className={styles.startLevelBtn} onClick={handleStartLevel}>
+              🚀 Começar Nível
+            </button>
+          )}
+        </div>
+
+        {/* Level History - Same row as title, on the right */}
+        <LevelHistory
+          totalLevels={totalLevels}
+          levelStatuses={levelStatuses}
+          currentLevelId={currentLevelId}
+        />
+      </div>
 
       {/* Main Game Layout */}
       <div className={styles.gameLayout}>
         {/* Left Column - Instructions */}
         <div className={styles.instructionsPanel}>
-          {/* Function Editor */}
-          <FunctionEditor
-            functions={functions}
-            onFunctionsChange={setFunctions}
-            functionLimits={currentLevel?.functionLimits}
-          />
-
           {/* Recursion Warning */}
           {recursionWarning && (
             <RecursionWarning message={recursionWarning} onClose={clearWarning} />
@@ -232,37 +237,30 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             maxCommands={currentLevel?.maxCommands}
             functionLimits={currentLevel?.functionLimits}
             commandQueue={commandQueue}
+            currentCommandIndex={currentCommandIndex}
             disabled={!levelStarted}
           />
 
-          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {/* Timer - Show always if timeLimit exists */}
-            {currentLevel?.timeLimit && (
-              <Timer
-                timeLimit={currentLevel.timeLimit}
-                isRunning={timerRunning}
-                onTimeUp={handleTimeUp}
-              />
-            )}
-
-            {/* Start Level Button */}
-            {!levelStarted && (
-              <button className={styles.startLevelBtn} onClick={handleStartLevel}>
-                🚀 Começar Nível
-              </button>
-            )}
-
-            {/* Level History */}
-            <LevelHistory
-              totalLevels={totalLevels}
-              levelStatuses={levelStatuses}
-              currentLevelId={currentLevelId}
-            />
-          </div>
+          {/* Function Editor - Below Control Panel */}
+          <FunctionEditor
+            functions={functions}
+            onFunctionsChange={setFunctions}
+            functionLimits={currentLevel?.functionLimits}
+            disabled={!levelStarted}
+          />
         </div>
 
         {/* Right Column - Board */}
         <div className={styles.boardPanel}>
+          {/* Timer - Above the board */}
+          {currentLevel?.timeLimit && (
+            <Timer
+              timeLimit={currentLevel.timeLimit}
+              isRunning={timerRunning}
+              onTimeUp={handleTimeUp}
+            />
+          )}
+
           {/* Level Failed Message */}
           {levelFailed && (
             <div className={styles.failedMessage}>

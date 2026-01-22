@@ -18,6 +18,13 @@
   box-shadow: var(--shadow-md);
 }
 
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) 0;
+  width: 100%;
+}
+
 .commandCounter {
   width: 100%;
   padding: var(--spacing-3);
@@ -54,19 +61,21 @@
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-md);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
   transition: all var(--transition-normal);
   background: var(--gradient-primary);
   color: #ffffff;
   box-shadow: var(--shadow-sm);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .controls button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .controls button:active:not(:disabled) {
@@ -80,6 +89,7 @@
   background: var(--color-bg-tertiary);
   color: var(--color-text-muted);
   box-shadow: none;
+  border-color: var(--color-border);
 }
 
 /* Function buttons (F0, F1, F2) */
@@ -98,29 +108,48 @@
 
 /* Play button */
 .playBtn {
-  background: var(--gradient-success) !important;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
   box-shadow:
-    0 4px 15px rgba(34, 197, 94, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  min-width: 100px;
+    0 6px 20px rgba(16, 185, 129, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  min-width: 120px;
+  font-size: var(--font-size-base);
+  padding: var(--spacing-3) var(--spacing-5);
+  position: relative;
+  overflow: hidden;
+}
+
+.playBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.playBtn:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .playBtn:hover:not(:disabled) {
   box-shadow:
-    0 8px 25px rgba(34, 197, 94, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-  animation: pulse-green 1s infinite;
+    0 8px 30px rgba(16, 185, 129, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px) scale(1.02);
 }
 
 @keyframes pulse-green {
 
   0%,
   100% {
-    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
   }
 
   50% {
-    box-shadow: 0 8px 35px rgba(34, 197, 94, 0.6);
+    box-shadow: 0 8px 35px rgba(16, 185, 129, 0.6);
   }
 }
 
@@ -141,24 +170,19 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 
-/* Color Control Buttons */
-.colorControls {
+/* Command Groups */
+.commandGroup {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-  margin-top: var(--spacing-2);
-  padding: var(--spacing-3);
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border);
 }
 
-.buttonGroup {
-  display: flex;
-  gap: var(--spacing-2);
-  justify-content: center;
-  flex-wrap: wrap;
+.commandGroup:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .btnRed,
