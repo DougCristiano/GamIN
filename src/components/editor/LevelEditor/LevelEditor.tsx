@@ -55,9 +55,34 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
           gridSize: level.gridSize || 5,
         });
         setLevelName(level.name);
+        // Não resetar tempGridSize aqui automaticamente para evitar resets durante edição
+        // A sincronização será feita explicitamente ao selecionar um nível
       }
     }
   }, [selectedLevelId, levels]);
+
+  // Estado local para o input de tamanho do grid para permitir edição livre
+  const [tempGridSize, setTempGridSize] = useState<string>('5');
+
+  const handleSelectLevel = (id: number) => {
+    setSelectedLevelId(id);
+    const level = levels.find(l => l.id === id);
+    if (level) {
+      setTempGridSize((level.gridSize || 5).toString());
+    }
+  };
+
+  // Inicializar tempGridSize quando carrega
+  useEffect(() => {
+    // Apenas na primeira carga
+    if (selectedLevelId && levels.length > 0) {
+      const level = levels.find(l => l.id === selectedLevelId);
+      if (level) {
+        setTempGridSize((level.gridSize || 5).toString());
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Apenas mount
 
   if (!isOpen) return null;
 
@@ -326,7 +351,7 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
               <button
                 key={level.id}
                 className={`${styles.levelBtn} ${selectedLevelId === level.id ? styles.active : ''}`}
-                onClick={() => setSelectedLevelId(level.id)}
+                onClick={() => handleSelectLevel(level.id)}
               >
                 Nível {level.id}
               </button>
@@ -352,24 +377,62 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
             </div>
             <div className={styles.inputGroup}>
               <label>Tamanho (N x N)</label>
-              <input
-                type="number"
-                min="3"
-                max="10"
-                value={currentLevel?.gridSize || 5}
-                onChange={e => {
-                  const val = parseInt(e.target.value);
-                  if (val >= 3 && val <= 10 && currentLevel) {
-                    setCurrentLevel({
-                      ...currentLevel,
-                      gridSize: val,
-                      robotStart: { x: 0, y: 0 },
-                      starPositions: [{ x: val - 1, y: val - 1 }],
-                      obstacles: [],
-                    });
-                  }
-                }}
-              />
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={tempGridSize}
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val === '' || /^\d*$/.test(val)) {
+                      setTempGridSize(val);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      // Trigger apply logic
+                      const btn = e.currentTarget.nextElementSibling as HTMLButtonElement;
+                      btn?.click();
+                    }
+                  }}
+                />
+                <button
+                  className={styles.modeBtn}
+                  onClick={() => {
+                    let val = parseInt(tempGridSize);
+                    if (isNaN(val)) val = 5;
+
+                    // Clamp value between 3 and 10
+                    if (val < 3) val = 3;
+                    if (val > 10) val = 10;
+
+                    setTempGridSize(val.toString());
+
+                    if (currentLevel && val !== currentLevel.gridSize) {
+                      if (confirm('⚠️ Mudar o tamanho irá resetar o mapa. Continuar?')) {
+                        setCurrentLevel({
+                          ...currentLevel,
+                          gridSize: val,
+                          robotStart: { x: 0, y: 0 },
+                          starPositions: [{ x: val - 1, y: val - 1 }],
+                          obstacles: [],
+                          keys: [],
+                          doors: [],
+                          coloredCells: []
+                        });
+                      } else {
+                        // Revert input to current level size
+                        setTempGridSize(currentLevel.gridSize?.toString() || '5');
+                      }
+                    }
+                  }}
+                  title="Aplicar novo tamanho"
+                  style={{ padding: '0 1rem', background: '#2563eb', color: 'white', border: 'none' }}
+                >
+                  Confirmar
+                </button>
+              </div>
             </div>
           </div>
 
@@ -377,17 +440,20 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
             <div className={styles.inputGroup}>
               <label>Limite de Comandos na Fila</label>
               <input
-                type="number"
-                min="1"
-                max="100"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={currentLevel?.maxCommands || ''}
                 onChange={e => {
-                  const val = e.target.value === '' ? undefined : parseInt(e.target.value);
-                  if (currentLevel) {
-                    setCurrentLevel({
-                      ...currentLevel,
-                      maxCommands: val,
-                    });
+                  const valStr = e.target.value;
+                  if (valStr === '' || /^\d*$/.test(valStr)) {
+                    const val = valStr === '' ? undefined : parseInt(valStr);
+                    if (currentLevel) {
+                      setCurrentLevel({
+                        ...currentLevel,
+                        maxCommands: val,
+                      });
+                    }
                   }
                 }}
                 placeholder="Ilimitado"
@@ -400,17 +466,20 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
             <div className={styles.inputGroup}>
               <label>Tempo Limite (segundos)</label>
               <input
-                type="number"
-                min="10"
-                max="600"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={currentLevel?.timeLimit || ''}
                 onChange={e => {
-                  const val = e.target.value === '' ? undefined : parseInt(e.target.value);
-                  if (currentLevel) {
-                    setCurrentLevel({
-                      ...currentLevel,
-                      timeLimit: val,
-                    });
+                  const valStr = e.target.value;
+                  if (valStr === '' || /^\d*$/.test(valStr)) {
+                    const val = valStr === '' ? undefined : parseInt(valStr);
+                    if (currentLevel) {
+                      setCurrentLevel({
+                        ...currentLevel,
+                        timeLimit: val,
+                      });
+                    }
                   }
                 }}
                 placeholder="Sem limite"
@@ -422,27 +491,30 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
           </div>
 
           <div style={{ marginTop: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+            <label className={styles.subSectionTitle}>
               Funções Disponíveis (deixe vazio para desabilitar)
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
               <div className={styles.inputGroup}>
                 <label>F0 - Limite</label>
                 <input
-                  type="number"
-                  min="1"
-                  max="50"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={currentLevel?.functionLimits?.F0 || ''}
                   onChange={e => {
-                    const val = e.target.value === '' ? undefined : parseInt(e.target.value);
-                    if (currentLevel) {
-                      setCurrentLevel({
-                        ...currentLevel,
-                        functionLimits: {
-                          ...currentLevel.functionLimits,
-                          F0: val,
-                        },
-                      });
+                    const valStr = e.target.value;
+                    if (valStr === '' || /^\d*$/.test(valStr)) {
+                      const val = valStr === '' ? undefined : parseInt(valStr);
+                      if (currentLevel) {
+                        setCurrentLevel({
+                          ...currentLevel,
+                          functionLimits: {
+                            ...currentLevel.functionLimits,
+                            F0: val,
+                          },
+                        });
+                      }
                     }
                   }}
                   placeholder="Desabilitada"
@@ -451,20 +523,23 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
               <div className={styles.inputGroup}>
                 <label>F1 - Limite</label>
                 <input
-                  type="number"
-                  min="1"
-                  max="50"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={currentLevel?.functionLimits?.F1 || ''}
                   onChange={e => {
-                    const val = e.target.value === '' ? undefined : parseInt(e.target.value);
-                    if (currentLevel) {
-                      setCurrentLevel({
-                        ...currentLevel,
-                        functionLimits: {
-                          ...currentLevel.functionLimits,
-                          F1: val,
-                        },
-                      });
+                    const valStr = e.target.value;
+                    if (valStr === '' || /^\d*$/.test(valStr)) {
+                      const val = valStr === '' ? undefined : parseInt(valStr);
+                      if (currentLevel) {
+                        setCurrentLevel({
+                          ...currentLevel,
+                          functionLimits: {
+                            ...currentLevel.functionLimits,
+                            F1: val,
+                          },
+                        });
+                      }
                     }
                   }}
                   placeholder="Desabilitada"
@@ -473,20 +548,23 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
               <div className={styles.inputGroup}>
                 <label>F2 - Limite</label>
                 <input
-                  type="number"
-                  min="1"
-                  max="50"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={currentLevel?.functionLimits?.F2 || ''}
                   onChange={e => {
-                    const val = e.target.value === '' ? undefined : parseInt(e.target.value);
-                    if (currentLevel) {
-                      setCurrentLevel({
-                        ...currentLevel,
-                        functionLimits: {
-                          ...currentLevel.functionLimits,
-                          F2: val,
-                        },
-                      });
+                    const valStr = e.target.value;
+                    if (valStr === '' || /^\d*$/.test(valStr)) {
+                      const val = valStr === '' ? undefined : parseInt(valStr);
+                      if (currentLevel) {
+                        setCurrentLevel({
+                          ...currentLevel,
+                          functionLimits: {
+                            ...currentLevel.functionLimits,
+                            F2: val,
+                          },
+                        });
+                      }
                     }
                   }}
                   placeholder="Desabilitada"
