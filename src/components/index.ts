@@ -10,4 +10,4 @@ export { Header } from './layout';
 
 // Game components
 // Game components
-export { CommandQueue, ControlPanel, Game, LevelNavigation, RecursionWarning, Timer, LevelHistory, type LevelStatus } from './game';
+export { CommandQueue, ControlPanel, ActionButtons, Game, LevelNavigation, RecursionWarning, Timer, LevelHistory, type LevelStatus } from './game';

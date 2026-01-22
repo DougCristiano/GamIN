@@ -160,6 +160,40 @@
   user-select: none;
 }
 
+/* ========================================
+   QUEUE ROW - Command Queue + Play/Reset in one line
+   ======================================== */
+.queueRow {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-4);
+  width: 100%;
+  margin-bottom: var(--spacing-4);
+}
+
+.queueWrapper {
+  flex: 3;
+  min-width: 0;
+}
+
+/* Legacy section for backwards compatibility */
+.controlQueueSection {
+  display: flex;
+  gap: var(--spacing-6);
+  width: 100%;
+  margin-bottom: var(--spacing-4);
+  align-items: flex-start;
+}
+
+.controlPanelWrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+/* Legacy queue section for backwards compatibility */
 .queueSection {
   width: 100%;
   margin-bottom: var(--spacing-4);
@@ -431,6 +465,22 @@
   .instructionsPanel {
     max-width: 600px;
     margin: 0 auto;
+  }
+
+  .queueRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-3);
+  }
+
+  .controlQueueSection {
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .controlPanelWrapper,
+  .queueWrapper {
+    width: 100%;
   }
 }
 

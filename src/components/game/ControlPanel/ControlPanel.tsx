@@ -9,10 +9,7 @@ import styles from './ControlPanel.module.css';
 
 interface ControlPanelProps {
   onAddCommand: (cmd: Command) => void;
-  onPlay: () => void;
-  onReset: () => void;
   isExecuting: boolean;
-  hasCommands: boolean;
   commandCount: number;
   maxCommands?: number;
   functionLimits?: FunctionLimits;
@@ -21,10 +18,7 @@ interface ControlPanelProps {
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   onAddCommand,
-  onPlay,
-  onReset,
   isExecuting,
-  hasCommands,
   commandCount,
   maxCommands,
   functionLimits,
@@ -35,17 +29,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   return (
     <div className={styles.controlsContainer}>
-
-      {/* Action Buttons - Right after queue */}
-      <div className={styles.actionButtons}>
-        <button onClick={onPlay} disabled={disabled || isExecuting || !hasCommands} className={styles.playBtn}>
-          <FaPlay /> PLAY
-        </button>
-        <button onClick={onReset} className={styles.resetBtn} disabled={disabled}>
-          <FaUndo /> Reset
-        </button>
-      </div>
-
       <div className={styles.controls}>
         {maxCommands !== undefined && (
           <div className={styles.commandCounter}>
@@ -118,4 +101,33 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   );
 };
 
+// Novo componente para os botões de ação (Play/Reset)
+interface ActionButtonsProps {
+  onPlay: () => void;
+  onReset: () => void;
+  isExecuting: boolean;
+  hasCommands: boolean;
+  disabled?: boolean;
+}
+
+export const ActionButtons: React.FC<ActionButtonsProps> = ({
+  onPlay,
+  onReset,
+  isExecuting,
+  hasCommands,
+  disabled = false,
+}) => {
+  return (
+    <div className={styles.actionButtons}>
+      <button onClick={onPlay} disabled={disabled || isExecuting || !hasCommands} className={styles.playBtn}>
+        <FaPlay /> PLAY
+      </button>
+      <button onClick={onReset} className={styles.resetBtn} disabled={disabled}>
+        <FaUndo /> Reset
+      </button>
+    </div>
+  );
+};
+
 export default ControlPanel;
+

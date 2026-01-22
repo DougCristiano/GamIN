@@ -11,6 +11,7 @@ import { useGame, useCommands } from '@/hooks';
 import {
   FunctionEditor,
   ControlPanel,
+  ActionButtons,
   LevelNavigation,
   RecursionWarning,
   Timer,
@@ -231,34 +232,40 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
         </div>
       </div>
 
-      {/* Command Queue - Full Width */}
-      <div className={styles.queueSection}>
-        <CommandQueue commands={commandQueue} currentCommandIndex={currentCommandIndex} />
+      {/* Command Queue Row: Queue + Play + Reset in one line */}
+      <div className={styles.queueRow}>
+        <div className={styles.queueWrapper}>
+          <CommandQueue commands={commandQueue} currentCommandIndex={currentCommandIndex} />
+        </div>
+        <ActionButtons
+          onPlay={handlePlay}
+          onReset={handleReset}
+          isExecuting={isExecuting}
+          hasCommands={commandQueue.length > 0}
+          disabled={!levelStarted}
+        />
       </div>
 
-      {/* Main Game Layout */}
+      {/* Main Game Layout - Two Columns */}
       <div className={styles.gameLayout}>
-        {/* Left Column - Instructions */}
+        {/* Left Column - Control Panel + Function Editor */}
         <div className={styles.instructionsPanel}>
           {/* Recursion Warning */}
           {recursionWarning && (
             <RecursionWarning message={recursionWarning} onClose={clearWarning} />
           )}
 
-          {/* Control Panel with Command Queue */}
+          {/* Control Panel */}
           <ControlPanel
             onAddCommand={addCommand}
-            onPlay={handlePlay}
-            onReset={handleReset}
             isExecuting={isExecuting}
-            hasCommands={commandQueue.length > 0}
             commandCount={commandQueue.length}
             maxCommands={currentLevel?.maxCommands}
             functionLimits={currentLevel?.functionLimits}
             disabled={!levelStarted}
           />
 
-          {/* Function Editor - Below Control Panel */}
+          {/* Function Editor */}
           <FunctionEditor
             functions={functions}
             onFunctionsChange={setFunctions}
@@ -266,6 +273,7 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             disabled={!levelStarted}
           />
         </div>
+
 
         {/* Right Column - Board */}
         <div className={styles.boardPanel}>

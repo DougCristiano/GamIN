@@ -1,1 +1,1 @@
-export { ControlPanel, default } from './ControlPanel';
+export { ControlPanel, ActionButtons, default } from './ControlPanel';

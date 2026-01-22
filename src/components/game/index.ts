@@ -3,7 +3,7 @@
  */
 
 export { CommandQueue } from './CommandQueue';
-export { ControlPanel } from './ControlPanel';
+export { ControlPanel, ActionButtons } from './ControlPanel';
 export { Game } from './Game';
 export { LevelNavigation } from './LevelNavigation';
 export { RecursionWarning } from './RecursionWarning';
