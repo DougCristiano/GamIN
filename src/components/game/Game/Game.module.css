@@ -10,13 +10,22 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-/* Header Row: Title and Progress */
+/* Header Row: Title, Button and Progress */
 .headerRow {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--spacing-6);
+  flex-direction: column;
+  gap: var(--spacing-3);
   margin-bottom: var(--spacing-4);
+  width: 100%;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .titleSection {
@@ -24,6 +33,11 @@
   flex-direction: column;
   gap: var(--spacing-3);
   flex: 1;
+}
+
+.timerSection {
+  display: flex;
+  gap: 2rem;
 }
 
 /* ========================================
@@ -64,24 +78,44 @@
   display: grid;
   width: 600px;
   height: 600px;
-  background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
-  border: 2px solid var(--color-primary-600);
+  background: linear-gradient(145deg, #0a0a1e 0%, #1a1a2e 100%);
+  border: 4px solid #000000;
   box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(59, 130, 246, 0.08);
-  border-radius: var(--radius-xl);
+    inset 0 0 0 3px #333333,
+    8px 8px 0px #000000,
+    0 0 30px rgba(0, 255, 255, 0.2);
+  border-radius: 0;
   overflow: hidden;
+  image-rendering: pixelated;
+}
+
+.board::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 255, 0.03) 2px,
+      rgba(0, 255, 255, 0.03) 4px);
+  pointer-events: none;
+  z-index: 100;
 }
 
 .cell {
   width: 100%;
   height: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
-  transition: background var(--transition-fast);
+  transition: background 0.1s ease;
+  position: relative;
 }
 
 .cell:hover {
@@ -89,13 +123,17 @@
 }
 
 .wall {
-  background: linear-gradient(135deg,
-      var(--color-wall) 0%,
-      #2d3748 100%);
+  background:
+    linear-gradient(45deg, #1a1a1a 25%, transparent 25%),
+    linear-gradient(-45deg, #1a1a1a 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #2a2a2a 75%),
+    linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+  border: 2px solid #000000;
   box-shadow:
-    inset 0 2px 4px rgba(255, 255, 255, 0.1),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-  border-color: #1f2937;
+    inset 0 0 0 1px #444444,
+    inset 2px 2px 0px rgba(255, 255, 255, 0.1);
 }
 
 .cellRed {
@@ -122,28 +160,71 @@
   user-select: none;
 }
 
+.queueSection {
+  width: 100%;
+  margin-bottom: var(--spacing-4);
+}
+
 .startLevelBtn {
   width: fit-content;
-  padding: var(--spacing-3) var(--spacing-5);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  background: var(--gradient-primary);
-  color: #ffffff;
-  border: none;
-  border-radius: var(--radius-md);
+  padding: var(--spacing-4) var(--spacing-6);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  background: linear-gradient(180deg, #ffff00 0%, #ffaa00 100%);
+  color: #000000;
+  border: 4px solid #000000;
+  border-radius: 0;
   cursor: pointer;
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-normal);
+  box-shadow:
+    4px 4px 0px #000000,
+    inset 2px 2px 0px rgba(255, 255, 255, 0.5),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.3);
+  transition: all 0.1s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Courier New', monospace;
+  animation: pulse-yellow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-yellow {
+
+  0%,
+  100% {
+    box-shadow:
+      4px 4px 0px #000000,
+      inset 2px 2px 0px rgba(255, 255, 255, 0.5),
+      inset -2px -2px 0px rgba(0, 0, 0, 0.3);
+  }
+
+  50% {
+    box-shadow:
+      4px 4px 0px #000000,
+      inset 2px 2px 0px rgba(255, 255, 255, 0.5),
+      inset -2px -2px 0px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(255, 255, 0, 0.6);
+  }
 }
 
 .startLevelBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-lg);
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: linear-gradient(180deg, #ffff66 0%, #ffbb00 100%);
+  transform: translate(-2px, -2px);
+  box-shadow:
+    6px 6px 0px #000000,
+    inset 2px 2px 0px rgba(255, 255, 255, 0.6),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.3),
+    0 0 25px rgba(255, 255, 0, 0.8);
+}
+
+.startLevelBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow:
+    2px 2px 0px #000000,
+    inset 2px 2px 0px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 0px rgba(255, 255, 255, 0.3);
 }
 
 .failedMessage {

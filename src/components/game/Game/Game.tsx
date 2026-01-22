@@ -15,6 +15,7 @@ import {
   RecursionWarning,
   Timer,
   LevelHistory,
+  CommandQueue,
   type LevelStatus,
 } from '@/components';
 import robotImg from '@/assets/robot.png';
@@ -192,29 +193,47 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
   return (
     <div className={styles.container}>
       {/* Header Row: Title (left) and Progress (right) */}
+      {/* Header Row: Title, Start Button, and Progress */}
       <div className={styles.headerRow}>
-        <div className={styles.titleSection}>
-          {/* Level Navigation */}
+        <div className={styles.topRow}>
+          {/* Level Title */}
           <LevelNavigation
             levelName={levelName}
             currentLevelId={currentLevelId}
             totalLevels={totalLevels}
           />
 
-          {/* Start Level Button - Below title */}
-          {!levelStarted && (
-            <button className={styles.startLevelBtn} onClick={handleStartLevel}>
-              🚀 Começar Nível
-            </button>
-          )}
-        </div>
+          <section className={styles.timerSection}>
+            {/* Level History - Below title and button */}
+            <LevelHistory
+              totalLevels={totalLevels}
+              levelStatuses={levelStatuses}
+              currentLevelId={currentLevelId}
+            />
+            {/* Start Level Button - Same line as title */}
+            {!levelStarted && (
+              <button className={styles.startLevelBtn} onClick={handleStartLevel}>
+                Começar Nível
+              </button>
+            )}
+            {/* Timer - Next to Start Button (or replacing it when started) */}
+            {currentLevel?.timeLimit && (
+              <Timer
+                timeLimit={currentLevel.timeLimit}
+                isRunning={timerRunning}
+                onTimeUp={handleTimeUp}
+              />
+            )}
 
-        {/* Level History - Same row as title, on the right */}
-        <LevelHistory
-          totalLevels={totalLevels}
-          levelStatuses={levelStatuses}
-          currentLevelId={currentLevelId}
-        />
+          </section>
+
+
+        </div>
+      </div>
+
+      {/* Command Queue - Full Width */}
+      <div className={styles.queueSection}>
+        <CommandQueue commands={commandQueue} currentCommandIndex={currentCommandIndex} />
       </div>
 
       {/* Main Game Layout */}
@@ -236,8 +255,6 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
             commandCount={commandQueue.length}
             maxCommands={currentLevel?.maxCommands}
             functionLimits={currentLevel?.functionLimits}
-            commandQueue={commandQueue}
-            currentCommandIndex={currentCommandIndex}
             disabled={!levelStarted}
           />
 
@@ -252,14 +269,9 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
 
         {/* Right Column - Board */}
         <div className={styles.boardPanel}>
-          {/* Timer - Above the board */}
-          {currentLevel?.timeLimit && (
-            <Timer
-              timeLimit={currentLevel.timeLimit}
-              isRunning={timerRunning}
-              onTimeUp={handleTimeUp}
-            />
-          )}
+
+
+
 
           {/* Level Failed Message */}
           {levelFailed && (

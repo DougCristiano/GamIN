@@ -28,7 +28,6 @@ export const CommandQueue: React.FC<CommandQueueProps> = ({ commands, currentCom
 
   return (
     <div className={styles.queueDisplay}>
-      <strong>Fila de Comandos:</strong>
       {commands.length === 0 ? (
         <div className={styles.emptyState}>
           <FaInbox className={styles.emptyIcon} />

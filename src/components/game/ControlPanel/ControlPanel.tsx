@@ -5,7 +5,6 @@
 
 import { FaArrowLeft, FaArrowUp, FaArrowRight, FaPlay, FaUndo } from 'react-icons/fa';
 import type { Command, FunctionLimits } from '@/types';
-import { CommandQueue } from '../CommandQueue/CommandQueue';
 import styles from './ControlPanel.module.css';
 
 interface ControlPanelProps {
@@ -17,8 +16,6 @@ interface ControlPanelProps {
   commandCount: number;
   maxCommands?: number;
   functionLimits?: FunctionLimits;
-  commandQueue: Command[];
-  currentCommandIndex?: number;
   disabled?: boolean;
 }
 
@@ -31,8 +28,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   commandCount,
   maxCommands,
   functionLimits,
-  commandQueue,
-  currentCommandIndex = -1,
   disabled = false,
 }) => {
   const isLimitReached = maxCommands !== undefined && commandCount >= maxCommands;
@@ -40,7 +35,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   return (
     <div className={styles.controlsContainer}>
-      <CommandQueue commands={commandQueue} currentCommandIndex={currentCommandIndex} />
 
       {/* Action Buttons - Right after queue */}
       <div className={styles.actionButtons}>

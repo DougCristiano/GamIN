@@ -42,11 +42,13 @@ export const Timer: React.FC<TimerProps> = ({ timeLimit, isRunning, onTimeUp }) 
     const isLowTime = timeLeft <= 10;
 
     return (
-        <div className={`${styles.timer} ${isLowTime ? styles.warning : ''}`}>
-            <FaClock />
-            <span className={styles.time}>
-                {minutes}:{seconds.toString().padStart(2, '0')}
-            </span>
+        <div className={`${styles.timerContainer} ${isLowTime ? styles.warning : ''}`}>
+            <div className={styles.timer}>
+                <FaClock className={styles.icon} />
+                <span className={styles.timeText}>
+                    {minutes}:{seconds.toString().padStart(2, '0')}
+                </span>
+            </div>
         </div>
     );
 };

@@ -12,34 +12,86 @@
   flex-wrap: wrap;
   gap: var(--spacing-3);
   padding: var(--spacing-4);
-  background: var(--color-bg-primary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1e 100%);
+  border: 3px solid #000000;
+  border-radius: 0;
+  box-shadow:
+    inset 0 0 0 2px #333333,
+    3px 3px 0px #000000;
 }
 
 .actionButtons {
   display: flex;
   gap: var(--spacing-3);
-  padding: var(--spacing-3) 0;
+  padding: var(--spacing-4);
   width: 100%;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1e 100%);
+  border: 3px solid #000000;
+  border-radius: 0;
+  box-shadow:
+    inset 0 0 0 2px #333333,
+    4px 4px 0px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.actionButtons::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      #00ff00 25%,
+      #ff00ff 50%,
+      #00ffff 75%,
+      transparent 100%);
+  animation: retro-scan 3s linear infinite;
+}
+
+@keyframes retro-scan {
+  0% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0.3;
+  }
 }
 
 .commandCounter {
   width: 100%;
   padding: var(--spacing-3);
-  background: var(--color-primary-50);
-  border: 1px solid var(--color-primary-200);
-  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1e 100%);
+  border: 3px solid #000000;
+  border-radius: 0;
   text-align: center;
   font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
+  color: #ffffff;
   margin-bottom: var(--spacing-2);
+  box-shadow:
+    inset 0 0 0 2px #333333,
+    3px 3px 0px #000000;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.commandCounter strong {
+  color: #00ffff;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
 .limitWarning {
-  color: var(--color-warning);
+  color: #ff0000;
   font-weight: var(--font-weight-bold);
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+  animation: blink 1s infinite;
 }
 
 @keyframes blink {
@@ -60,114 +112,190 @@
   align-items: center;
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-4);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+  border: 3px solid #000000;
   cursor: pointer;
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
-  transition: all var(--transition-normal);
-  background: var(--gradient-primary);
+  transition: all 0.1s ease;
+  background: linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 100%);
   color: #ffffff;
-  box-shadow: var(--shadow-sm);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    3px 3px 0px #000000,
+    inset 1px 1px 0px rgba(255, 255, 255, 0.3),
+    inset -1px -1px 0px rgba(0, 0, 0, 0.5);
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 80px;
 }
 
 .controls button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 100%);
+  transform: translate(-1px, -1px);
+  box-shadow:
+    4px 4px 0px #000000,
+    inset 1px 1px 0px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 0px rgba(0, 0, 0, 0.5);
 }
 
 .controls button:active:not(:disabled) {
-  transform: translateY(-1px);
+  transform: translate(2px, 2px);
+  box-shadow:
+    1px 1px 0px #000000,
+    inset 1px 1px 0px rgba(0, 0, 0, 0.5),
+    inset -1px -1px 0px rgba(255, 255, 255, 0.2);
 }
 
 .controls button:disabled {
-  opacity: 0.5;
+  background: linear-gradient(180deg, #333333 0%, #1a1a1a 100%);
+  color: #666666;
   cursor: not-allowed;
-  transform: none;
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-muted);
-  box-shadow: none;
-  border-color: var(--color-border);
+  opacity: 0.5;
 }
 
-/* Function buttons (F0, F1, F2) */
+.controls button svg {
+  font-size: var(--font-size-lg);
+}
+
+/* Function buttons (F0, F1, F2) - Retro Purple */
 .functionCallBtn {
-  background: var(--gradient-function) !important;
+  background: linear-gradient(180deg, #aa00ff 0%, #7700bb 100%) !important;
+  color: #ffffff !important;
+  border: 3px solid #000000 !important;
   box-shadow:
-    0 4px 15px rgba(147, 51, 234, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    3px 3px 0px #000000,
+    inset 1px 1px 0px rgba(255, 255, 255, 0.3),
+    inset -1px -1px 0px rgba(0, 0, 0, 0.5) !important;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 2px;
 }
 
 .functionCallBtn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #bb00ff 0%, #8800cc 100%) !important;
   box-shadow:
-    0 8px 25px rgba(147, 51, 234, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    4px 4px 0px #000000,
+    inset 1px 1px 0px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 0px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Play button */
+/* Play button - Retro Game Style */
 .playBtn {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  background: linear-gradient(180deg, #00ff00 0%, #00cc00 100%) !important;
+  color: #000000 !important;
+  border: 4px solid #000000 !important;
   box-shadow:
-    0 6px 20px rgba(16, 185, 129, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-  min-width: 120px;
-  font-size: var(--font-size-base);
-  padding: var(--spacing-3) var(--spacing-5);
+    4px 4px 0px #000000,
+    inset 2px 2px 0px rgba(255, 255, 255, 0.5),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.3) !important;
+  min-width: 140px;
+  font-size: var(--font-size-lg);
+  padding: var(--spacing-4) var(--spacing-6);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Courier New', monospace;
   position: relative;
-  overflow: hidden;
+  transition: all 0.1s ease;
+  image-rendering: pixelated;
+  cursor: pointer;
 }
 
 .playBtn::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg,
+      transparent 0%,
+      transparent 45%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 55%,
+      transparent 100%);
+  pointer-events: none;
+  animation: retro-shine 2s linear infinite;
 }
 
-.playBtn:hover:not(:disabled)::before {
-  left: 100%;
+@keyframes retro-shine {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .playBtn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #00ff66 0%, #00dd00 100%) !important;
+  transform: translate(-2px, -2px);
   box-shadow:
-    0 8px 30px rgba(16, 185, 129, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-  transform: translateY(-2px) scale(1.02);
+    6px 6px 0px #000000,
+    inset 2px 2px 0px rgba(255, 255, 255, 0.6),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.3) !important;
 }
 
-@keyframes pulse-green {
-
-  0%,
-  100% {
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
-  }
-
-  50% {
-    box-shadow: 0 8px 35px rgba(16, 185, 129, 0.6);
-  }
+.playBtn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow:
+    2px 2px 0px #000000,
+    inset 2px 2px 0px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 0px rgba(255, 255, 255, 0.3) !important;
 }
 
-/* Reset button */
+.playBtn:disabled {
+  background: linear-gradient(180deg, #666666 0%, #444444 100%) !important;
+  color: #999999 !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Reset button - Retro Game Style */
 .resetBtn {
-  background: var(--gradient-reset) !important;
+  background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%) !important;
+  color: #ffffff !important;
+  border: 4px solid #000000 !important;
   box-shadow:
-    0 4px 15px rgba(100, 116, 139, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    4px 4px 0px #000000,
+    inset 2px 2px 0px rgba(255, 255, 255, 0.3),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.3) !important;
+  min-width: 140px;
+  font-size: var(--font-size-lg);
+  padding: var(--spacing-4) var(--spacing-6);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Courier New', monospace;
+  position: relative;
+  transition: all 0.1s ease;
+  image-rendering: pixelated;
+  cursor: pointer;
 }
 
 .resetBtn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ff6666 0%, #dd0000 100%) !important;
+  transform: translate(-2px, -2px);
   box-shadow:
-    0 8px 20px rgba(100, 116, 139, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    6px 6px 0px #000000,
+    inset 2px 2px 0px rgba(255, 255, 255, 0.4),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.3) !important;
+}
+
+.resetBtn:active:not(:disabled) {
+  transform: translate(2px, 2px);
   box-shadow:
-    0 8px 20px rgba(100, 116, 139, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    2px 2px 0px #000000,
+    inset 2px 2px 0px rgba(0, 0, 0, 0.3),
+    inset -2px -2px 0px rgba(255, 255, 255, 0.3) !important;
+}
+
+.resetBtn:disabled {
+  background: linear-gradient(180deg, #666666 0%, #444444 100%) !important;
+  color: #999999 !important;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Command Groups */
