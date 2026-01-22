@@ -133,6 +133,25 @@ export const Game: React.FC<GameProps> = ({ customLevels }) => {
     clearQueue();
   }, [currentLevelId, clearQueue]);
 
+  // Tutorial Mode - Show explanation on level load
+  useEffect(() => {
+    if (currentLevel?.tutorialMode && currentLevel.tutorialText) {
+      const showTutorial = () => {
+        showAlert(
+          <div style={{ textAlign: 'left', whiteSpace: 'pre-line' }}>
+            {currentLevel.tutorialText}
+          </div>,
+          `📝 Tutorial: ${currentLevel.name}`,
+          () => { }
+        );
+      };
+
+      // Slight delay to ensure smooth transition
+      const timer = setTimeout(showTutorial, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [currentLevel?.id, currentLevel?.tutorialMode, currentLevel?.tutorialText, showAlert]);
+
   // Handle level start
   const handleStartLevel = () => {
     setLevelStarted(true);

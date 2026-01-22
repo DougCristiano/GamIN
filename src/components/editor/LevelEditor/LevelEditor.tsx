@@ -505,6 +505,61 @@ const LevelEditor: React.FC<LevelEditorProps> = ({ isOpen, onClose, onSave, asPa
             </div>
           </div>
 
+          <div style={{ marginTop: '1rem', borderTop: '1px solid #333', paddingTop: '1rem' }}>
+            <div className={styles.inputGroup}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1rem', fontWeight: 'bold' }}>
+                <input
+                  type="checkbox"
+                  checked={currentLevel?.tutorialMode || false}
+                  onChange={e => {
+                    if (currentLevel) {
+                      setCurrentLevel({
+                        ...currentLevel,
+                        tutorialMode: e.target.checked,
+                      });
+                    }
+                  }}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                Ativar Modo Tutorial
+              </label>
+              <small style={{ color: 'var(--color-text-muted)', marginLeft: '26px' }}>
+                Se ativado, um modal com explicação aparecerá antes do nível começar.
+              </small>
+            </div>
+
+            {currentLevel?.tutorialMode && (
+              <div className={styles.inputGroup} style={{ marginTop: '0.5rem', marginLeft: '26px' }}>
+                <label>Texto Explicativo</label>
+                <textarea
+                  value={currentLevel.tutorialText || ''}
+                  onChange={e => {
+                    if (currentLevel) {
+                      setCurrentLevel({
+                        ...currentLevel,
+                        tutorialText: e.target.value,
+                      });
+                    }
+                  }}
+                  placeholder="Escreva aqui as instruções ou dicas que o jogador deve ler..."
+                  rows={4}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: '#1a1a2e',
+                    color: '#e0e0e0',
+                    border: '1px solid #444',
+                    borderRadius: '4px',
+                    fontFamily: 'monospace',
+                    fontSize: '0.9rem',
+                    resize: 'vertical',
+                    minHeight: '100px'
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
           <div style={{ marginTop: '1rem' }}>
             <label className={styles.subSectionTitle}>
               Funções Disponíveis (deixe vazio para desabilitar)

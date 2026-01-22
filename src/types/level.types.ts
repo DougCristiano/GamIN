@@ -52,6 +52,10 @@ export interface LevelConfig {
   functionLimits?: FunctionLimits;
   /** Time limit in seconds (undefined = no time limit) */
   timeLimit?: number;
+  /** Whether this level is a tutorial level */
+  tutorialMode?: boolean;
+  /** Text to explain the level concepts in tutorial mode */
+  tutorialText?: string;
 }
 
 /** Level editor state */
